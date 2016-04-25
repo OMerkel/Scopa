@@ -25,6 +25,9 @@ LICENSING
     - data/backgrounds/blue.png
     - data/backgrounds/green.png
     - data/backgrounds/red.png
+    - docs/index.html
+    - docs/protocol.html
+    - docs/style.css
     - js/app.js
     - js/cirulla.js
     - js/classic.js
