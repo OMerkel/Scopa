@@ -1,0 +1,192 @@
+<!--
+    Copyright (C) 2016 Marco Scarpetta
+
+    This file is part of Scopa.
+
+    Scopa is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Scopa is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Scopa.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Scopa</title>
+        <meta charset="utf-8">
+        <link rel="shortcut icon" type="image/svg" href="data/icon.svg"/>
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="locales/en.css">
+        <link rel="stylesheet" href="locales/en.css" id="locale">
+    </head>
+    
+    <body>
+        <style id="root"></style>
+        <style id="animations"></style>
+        <table class="table">
+            <tr>
+                <td>
+                    <div class="deck" id="mainDeck"></div>
+                </td>
+                <td id="cpu1Cards">
+                    <div id="cpu1card3_1" class="ch3"></div>
+                    <div id="cpu1card3_2" class="ch3"></div>
+                    <div id="cpu1card3_3" class="card"></div>
+                </td>
+                <td>
+                    <div class="deck" id="team1Deck"></div>
+                </td>
+            </tr>
+            <tr>
+                <td id="cpu3Cards">
+                    <div id="cpu3card3_1" class="cv3"></div><br>
+                    <div id="cpu3card3_2" class="cv3"></div><br>
+                    <div id="cpu3card3_3" class="card"></div>
+                </td>
+                <td id="tableCards" class="center">
+                    <div id="tableCards_1" class="cch ccv"></div>
+                    <div id="tableCards_2" class="cch ccv"></div>
+                    <div id="tableCards_3" class="cch ccv"></div>
+                    <div id="tableCards_4" class="cch ccv"></div>
+                    <div id="tableCards_5" class="ccv card"></div><br>
+                    <div id="tableCards_6" class="cch card"></div>
+                    <div id="tableCards_7" class="cch card"></div>
+                    <div id="tableCards_8" class="cch card"></div>
+                    <div id="tableCards_9" class="cch card"></div>
+                    <div id="tableCards_10" class="card"></div>
+                </td>
+                <td id="cpu2Cards">
+                    <div id="cpu2card3_1" class="cv3"></div><br>
+                    <div id="cpu2card3_2" class="cv3"></div><br>
+                    <div id="cpu2card3_3" class="card"></div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a href="#" id="menu-btn">Menu</a>
+                </td>
+                <td id="humanCards">
+                    <div id="humancard3_1" class="ch3"></div>
+                    <div id="humancard3_2" class="ch3"></div>
+                    <div id="humancard3_3" class="card"></div>
+                </td>
+                <td>
+                    <div id="team0Deck" class="deck"></div>
+                </td>
+            </tr>
+        </table>
+        
+        <div class="dialog" id="menu">
+            <div>
+                <div class="toolbar">
+                    <a href="#" id="new-game-btn" data-string-id="new-game"></a>
+                    <a href="#" id="settings-btn" data-string-id="settings"></a>
+                    <a href="#" id="cronology-btn" data-string-id="cronology"></a>
+                    <a href="#" id="about-btn" data-string-id="about"></a>
+                    <a href="#" id="close-menu-btn" data-string-id="close"></a>
+                </div>
+                        
+                <div id="new-game" hidden="true" class="content">
+                    <label data-string-id="name"></label>
+                    <input type="text" id="userName"></input><br>
+                    
+                    <label data-string-id="variant"></label>
+                    <select id="variant"></select><br>
+                 
+                    <label data-string-id="number-of-players"></label>
+                    <select id="numberOfPlayers"></select><br>
+                                
+                    <button id="start-game" data-string-id="start-game"></button>
+                </div>
+                        
+                <div id="settings" hidden="true" class="content">
+                    <label data-string-id="cards-type"></label>
+                    <select id="cardType"></select><br>
+                                
+                    <label data-string-id="background"></label><br>
+                    <img class="backgroundPreview" src="data/backgrounds/green.png"></img><br>
+                    <img class="backgroundPreview" src="data/backgrounds/blue.png"></img><br>
+                    <img class="backgroundPreview" src="data/backgrounds/red.png"></img>
+                </div>
+                        
+                <div id="cronology" hidden="true" class="content">
+                </div>
+                        
+                <div id="about" hidden="true" class="content">
+                    <p>
+                        <a href="docs/index.html">Help</a>
+                    </p>
+                    
+                    <h2>Credits</h2>
+                    
+                    <h3>Code</h3>
+                    <p>Marco Scarpetta</p>
+                    
+                    <h3>Images</h3>
+                    <p>
+                        The images used inside this game are available online under free licences.
+                    </p>
+                    <ul>
+                        <li>Cards images</li>
+                        <ul>
+                            <li><a href="https://commons.wikimedia.org/wiki/Category:Naples_deck"
+                                target="_blank">Napoletane</a></li>
+                            <li><a href="https://commons.wikimedia.org/wiki/File:Carte_bergamasche.jpg"
+                                target="_blank">Bergamasche</a></li>
+                            <li><a href="https://commons.wikimedia.org/wiki/File:Carte_piacentine_al_completo.jpg"
+                                target="_blank">Piacentine</a></li>
+                        </ul>
+                        <li>Backgrounds</li>
+                        <p>Marco Scarpetta</p>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dialog" id="summary" hidden>
+            <div>
+                <div class="content">
+                    <h3>Match summary</h3>
+                    <table id="summaryTable">
+                    </table>
+                    <a href="#" id="summary-close-btn" data-string-id="close"></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dialog" id="match-end" hidden>
+            <div>
+                <h3 id="winner">
+                </h3>
+                <a href="#" id="match-end-close-btn">Close</a>
+            </div>
+        </div>
+        
+        <div class="dialog" id="move-choice" hidden>
+            <div>
+                <h3>Select the cards you want to take:</h3>
+                <div id="choices"></div>
+                <a href="#" id="move-choice-close-btn">Cancel</a>
+            </div>
+        </div>
+        
+        <div id="messages">
+        </div>
+        
+        <script type="text/javascript" src="js/utils.js"></script>
+        <script type="text/javascript" src="js/classic.js"></script>
+        <script type="text/javascript" src="js/scopone.js"></script>
+        <script type="text/javascript" src="js/rebello.js"></script>
+        <script type="text/javascript" src="js/cucita.js"></script>
+        <script type="text/javascript" src="js/cirulla.js"></script>
+        <script type="text/javascript" src="js/app.js"></script>
+    </body>
+</html>

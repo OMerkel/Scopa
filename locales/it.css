@@ -1,0 +1,84 @@
+/**
+ *
+ * Copyright (C) 2016 Marco Scarpetta
+ * 
+ * This file is part of Scopa.
+ * 
+ * Scopa is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Scopa is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Scopa.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */ 
+
+/* Main menu */
+[data-string-id='new-game']::before {
+    content: 'Nuova partita...';
+}
+
+[data-string-id='settings']::before {
+    content: 'Impostazioni';
+}
+
+[data-string-id='cronology']::before {
+    content: 'Cronologia';
+}
+
+[data-string-id='about']::before {
+    content: 'Informazioni';
+}
+
+[data-string-id='close']::before {
+    content: 'Chiudi';
+}
+
+/* New game window */
+[data-string-id='name']::before {
+    content: 'Nome:';
+}
+
+[data-string-id='variant']::before {
+    content: 'Variante:';
+}
+
+[data-string-id='number-of-players']::before {
+    content: 'Numero di giocatori:';
+}
+
+[data-string-id='start-game']::before {
+    content: 'Comincia partita';
+}
+
+/* Settings window */
+[data-string-id='cards-type']::before {
+    content: 'Tipo di carte:';
+}
+
+[data-string-id='background']::before {
+    content: 'Sfondo:';
+}
+
+/* Notifications */
+[data-string-id='first_player']::before {
+    content: 'Comincia ' attr(data-player) '!';
+}
+
+[data-string-id='cards_value_lt_10']::before {
+    content: 'La somma delle carte di ' attr(data-player) ' è minore di 10';
+}
+
+[data-string-id='2_equal_cards']::before {
+    content: attr(data-player) ' ha 2 carte uguali';
+}
+
+[data-string-id='3_equal_cards']::before {
+    content: attr(data-player) ' ha 3 carte uguali';
+}

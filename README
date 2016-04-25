@@ -1,0 +1,61 @@
+This is the README file for Scopa.
+
+Copyright (C) 2016 Marco Scarpetta <marcoscarpetta02@gmail.com>
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+This software aims to provide an implementation of the famous Italian
+card game "Scopa" (https://en.wikipedia.org/wiki/Scopa). It is written
+in Javascript and can work in any modern browser.
+It provides 5 variations of the original game and 2 types of cards.
+
+USAGE
+=====
+Open the file index.html with a web browser.
+
+LICENSING
+=========
+ * The following files:
+ 
+    - index.html
+    - style.css
+    - data/icon.svg
+    - data/backgrounds/blue.png
+    - data/backgrounds/green.png
+    - data/backgrounds/red.png
+    - js/app.js
+    - js/cirulla.js
+    - js/classic.js
+    - js/cucita.js
+    - js/rebello.js
+    - js/scopone.js
+    - js/utils.js
+    - locales/en.css
+    - locales/it.css
+    
+   are part of the Scopa software, Copyright (C) 2016 Marco Scarpetta <marcoscarpetta02@gmail.com>
+
+   Scopa is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   Scopa is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Scopa.  If not, see <http://www.gnu.org/licenses/>.
+    
+ * The jpg files in the "data/cards/Napoletane" directory are public domain
+   images available here: https://commons.wikimedia.org/wiki/Category:Naples_deck
+
+ * The jpg files in the "data/cards/Bergamasche" directory are cropped from
+   the public domain image available here: https://commons.wikimedia.org/wiki/File:Carte_bergamasche.jpg
+   
+ * The jpg files in the "data/cards/Piacentine" directory are cropped from
+   the public domain image available here:
+   https://commons.wikimedia.org/wiki/File:Carte_piacentine_al_completo.jpg

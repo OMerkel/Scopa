@@ -1,0 +1,239 @@
+/**
+ *
+ * Copyright (C) 2016 Marco Scarpetta
+ * 
+ * This file is part of Scopa.
+ * 
+ * Scopa is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Scopa is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Scopa.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+:root {
+    --w: 1000px;
+    --h: 500px;
+    --ch: 113px;
+    --cw: 65px;
+    --cn: 3;
+    --s: 50px;
+}
+
+body {
+    height: 100%;
+    overflow: hidden;
+    image-rendering: auto;
+}
+
+div, table, td, tr, body {
+    margin: 0px 0px;
+    padding: 0px 0px;
+}
+
+td {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+td.center {
+    background: none;
+}
+
+.table {
+    width: calc(var(--w));
+    height: calc(var(--h));
+    position:relative;
+    text-align: center;
+}
+
+.deck {
+    display: inline-block;
+    width: calc(2 * var(--cw));
+    height: var(--ch);
+}
+
+.cv3 {
+    display: inline-block;
+    width: var(--cw);
+    height: calc((var(--h) - 3 * var(--ch) - 2 * var(--s)) / 2);
+    max-height: calc(var(--ch) + var(--s));
+}
+
+.cv10 {
+    display: inline-block;
+    width: var(--cw);
+    height: calc((var(--h) - 3 * var(--ch) - 2 * var(--s)) / 9);
+    max-height: calc(var(--ch) + var(--s));
+}
+
+.ch3 {
+    display: inline-block;
+    width: calc((var(--w) - 5 * var(--cw) - 2 * var(--s)) / 2);
+    max-width: calc(var(--cw) + var(--s));
+    height: var(--ch);
+}
+
+.ch10 {
+    display: inline-block;
+    width: calc((var(--w) - 5 * var(--cw) - 2 * var(--s)) / 9);
+    max-width: calc(var(--cw) + var(--s));
+    height: var(--ch);
+}
+
+.card {
+    display: inline-block;
+    width: var(--cw);
+    height: var(--ch);
+}
+
+.ccv {
+    display: inline-block;
+    height: calc((var(--h) - 3 * var(--ch) - 2 * var(--s)));
+    max-height: calc(var(--ch) + var(--s))
+}
+
+.cch {
+    display: inline-block;
+    width: calc((var(--w) - 5 * var(--cw) - 2 * var(--s)) / 4);
+    max-width: calc(var(--cw) + var(--s))
+}
+
+.fixedCard {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+}
+
+.fixedDeck {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+}
+
+.userCard:hover {
+    box-shadow: #ed0 0px 0px 5px 5px;
+}
+  
+
+.dialog {
+    background: rgba(0,0,0,0.3);
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    z-index: 100;
+}
+
+.dialog > div {
+    background: #fff;
+    margin-top: 50px;
+    padding: 20px 20px;
+    display: inline-block;
+    border-radius: 5px;
+    box-shadow: #666 0px 0px 5px 5px;
+    display: inline-block;
+    max-height: calc(var(--h) - 100px);
+    max-width: calc(var(--w) - 140px);
+}
+
+.content {
+    text-align: left;
+    max-height: calc(var(--h) - 160px);
+    margin: 40px 40px;
+    overflow: auto;
+}
+
+.content > * {
+    margin: 10px;
+}
+
+.backgroundPreview {
+    display: inline-block;
+    padding-top: 30px;
+    padding-right: 10px;
+    width: calc((var(--w) / 4));
+    height: calc((var(--h) / 10));
+    color: #fff;
+    text-shadow: 0px 0px 3px #000;
+    text-align: right;
+}
+
+.toolbar {
+    display: block;
+}
+
+.toolbar > * {
+    text-decoration: none;
+    margin: 10px 10px;
+    opacity: 0.6;
+}
+
+.toolbar > *:hover {
+    opacity: 1;
+    border-bottom: 4px solid #0000ff;
+}
+
+.toolbar > .selected {
+    opacity: 1;
+    border-bottom: 4px solid #0000cc;
+}
+
+@keyframes message {
+    0% {opacity: 1;}
+    10% {opacity: 1;box-shadow: #f00 0px 0px 5px 5px;}
+    20% {opacity: 1;}
+    95% {opacity: 1;}
+    100% {opacity: 0;}
+}
+
+#messages {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 200;
+    float: right;
+    display: block;
+    text-align: right;
+}
+
+#messages > label {
+    display: inline-block;
+    padding: 20px;
+    margin: 10px;
+    background: #fff;
+    border-radius: 5px;
+}
+
+#menu-btn {
+    display: inline-block;
+    border-radius: 5px;
+    padding:20px;
+    background: #fff;
+}
+
+#box{
+    background: #efefef;
+    height: 100px;
+    width: 100px;
+    height: 300px;
+}
+
+.place{
+    height:33%;
+    border:1px solid #000;
+}
+
+#about {
+    text-align: left;
+}
