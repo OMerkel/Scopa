@@ -34,18 +34,20 @@ function UIHelper()
 }
 
 UIHelper.prototype.displayMessage = function(data) {
-    var messageDiv = document.createElement("label");
-    for (var key in data) messageDiv.dataset[key] = data[key];
-    messageDiv.style.animation = `message ${this.duration}s forwards`;
+    var message = document.createElement("label");
+    var br = document.createElement("br");
+    
+    for (var key in data) message.dataset[key] = data[key];
+    message.style.animation = `message ${this.duration}s forwards`;
     
     var helper = this;
-    messageDiv.addEventListener("animationend", function() {
-        helper.messages.removeChild(messageDiv);
+    message.addEventListener("animationend", function() {
+        helper.messages.removeChild(message);
         helper.messages.removeChild(br);
     });
     
-    this.messages.insertBefore(document.createElement("br"), messages.firstChild);
-    this.messages.insertBefore(messageDiv, messages.firstChild);
+    this.messages.insertBefore(br, messages.firstChild);
+    this.messages.insertBefore(message, messages.firstChild);
 }
 
 function GraphicsManager(cardsType)
@@ -362,29 +364,31 @@ function ScopaApplication()
         app.onResize();
     });
     
+    var menu = document.querySelector("#menu");
+    
     document.querySelector("#menu-btn").addEventListener("click", function() {
-        document.querySelector("#menu").hidden = false;
+        if (menu.hidden == false) menu.hidden = true;
+        else menu.hidden = false;
     });
     
-    document.querySelector("#new-game-btn").addEventListener("click", function() {
-        app.switchMenu("new-game");
-    });
+    //menu items
+    var items = document.querySelectorAll("#menu > label");
+    for (var i=0; i<items.length; i++)
+    {
+        items[i].addEventListener("click", function(event) {
+            app.showDialog(event.target.dataset.dialog);
+            menu.hidden = true;
+        });
+    }
     
-    document.querySelector("#settings-btn").addEventListener("click", function() {
-        app.switchMenu("settings");
-    });
-    
-    document.querySelector("#cronology-btn").addEventListener("click", function() {
-        app.switchMenu("cronology");
-    });
-    
-    document.querySelector("#about-btn").addEventListener("click", function() {
-        app.switchMenu("about");
-    });
-    
-    document.querySelector("#close-menu-btn").addEventListener("click", function() {
-        document.querySelector("#menu").hidden = true;
-    });
+    //dialogs' close buttons
+    var buttons = document.querySelectorAll(".close");
+    for (var i=0; i<buttons.length; i++)
+    {
+        buttons[i].addEventListener("click", function(event) {
+            document.getElementById(event.target.dataset.dialog).hidden = true;
+        });
+    }
     
     document.querySelector("#start-game").addEventListener("click", function() {
         app.onStartGame();
@@ -409,7 +413,7 @@ function ScopaApplication()
         }
         
         document.querySelector("#match-end").hidden = true;
-        app.switchMenu("new-game");        
+        app.showDialog("new-game");        
         document.querySelector("#menu").hidden = false;
     });
     
@@ -460,16 +464,14 @@ ScopaApplication.prototype.updateNumberOfPlayers = function() {
 }
 
 
-ScopaApplication.prototype.switchMenu = function(newMenu)
+ScopaApplication.prototype.showDialog = function(dialogId)
 {
-    var selectedBtn = document.querySelector(".selected");
-    if (selectedBtn)
+    var dialogs = document.querySelectorAll(".dialog");
+    for (var i=0; i<dialogs.length; i++) 
     {
-        selectedBtn.classList.remove("selected");
-        document.getElementById(selectedBtn.id.slice(0,-4)).hidden = true;
+        if (dialogs[i].id != dialogId) dialogs[i].hidden = true;
+        else dialogs[i].hidden = false;
     }
-    document.getElementById(newMenu).hidden = false;
-    document.getElementById(newMenu+"-btn").classList.add("selected");
 }
 
 ScopaApplication.prototype.onResize = function(e)
@@ -535,8 +537,6 @@ ScopaApplication.prototype.onStartGame = function()
     
     //clean animations
     document.getElementById("animations").innerHTML = "";
-    //clean cronology
-    document.getElementById("cronology").innerHTML = "";
     
     var numberOfPlayers = document.querySelector("#numberOfPlayers").selectedOptions[0].id.replace("numberOfPlayers-","");
     var variant = this.variants[document.querySelector("#variant").selectedOptions[0].dataset.index];
@@ -569,7 +569,7 @@ ScopaApplication.prototype.onStartGame = function()
     localStorage.variant = variant.name;
     localStorage.userName = userName;
     
-    document.querySelector("#menu").hidden = true;
+    document.querySelector("#new-game").hidden = true;
     
     this.analyze(response);
 }
@@ -898,4 +898,4 @@ app.registerGame(ReBelloMatch);
 app.registerGame(CucitaMatch);
 app.registerGame(CirullaMatch);
 app.updateNumberOfPlayers();
-app.switchMenu("new-game");
+app.showDialog("new-game");

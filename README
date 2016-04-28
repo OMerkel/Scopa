@@ -9,11 +9,32 @@ notice and this notice are preserved.
 This software aims to provide an implementation of the famous Italian
 card game "Scopa" (https://en.wikipedia.org/wiki/Scopa). It is written
 in Javascript and can work in any modern browser.
-It provides 5 variations of the original game and 2 types of cards.
+It provides 5 variations of the original game and 3 types of cards.
 
 USAGE
 =====
 Open the file index.html with a web browser.
+
+Alternatively you can use the Qt application, to be built as described in the
+next section.
+
+BUILDING (Qt application)
+=========================
+
+The Qt application is very simple. It is just a browser window, based on
+Qt WebEngine, that opens the index.html file.
+
+It requires at least Qt 5.7.0, since the Qt WebEngine shipped with this version
+is based on Chromium 49.
+
+To build the application run:
+
+  qmake qt-application/scopa.pro
+  make
+
+You can use the following command to run the application:
+
+  ./scopa
 
 LICENSING
 =========
@@ -37,6 +58,9 @@ LICENSING
     - js/utils.js
     - locales/en.css
     - locales/it.css
+    - qt-application/main.cpp
+    - qt-application/scopa.pro
+    - qt-application/scopa.qrc
     
    are part of the Scopa software, Copyright (C) 2016 Marco Scarpetta <marcoscarpetta02@gmail.com>
 

@@ -71,7 +71,7 @@
             </tr>
             <tr>
                 <td>
-                    <a href="#" id="menu-btn">Menu</a>
+                    <img src="data/menu.svg" width="60px" id="menu-btn" class="button"></img>
                 </td>
                 <td id="humanCards">
                     <div id="humancard3_1" class="ch3"></div>
@@ -84,30 +84,43 @@
             </tr>
         </table>
         
-        <div class="dialog" id="menu">
-            <div>
-                <div class="toolbar">
-                    <a href="#" id="new-game-btn" data-string-id="new-game"></a>
-                    <a href="#" id="settings-btn" data-string-id="settings"></a>
-                    <a href="#" id="cronology-btn" data-string-id="cronology"></a>
-                    <a href="#" id="about-btn" data-string-id="about"></a>
-                    <a href="#" id="close-menu-btn" data-string-id="close"></a>
+        <div class="menu" hidden="true" id="menu">
+            <label id="new-game-item" data-string-id="new-game" data-dialog="new-game"></label>
+            <label id="settings-item" data-string-id="settings" data-dialog="settings"></label>
+            <label id="cronology-item" data-string-id="cronology" data-dialog="cronology"></label>
+            <label id="about-item" data-string-id="about" data-dialog="about"></label>
+        </div>
+        
+        <div class="dialog" id="new-game">
+            <div class="window">
+                <div>
+                    <label class="title" data-string-id="new-game"></label>
+                    <label class="button close" data-dialog="new-game"></label>
                 </div>
-                        
-                <div id="new-game" hidden="true" class="content">
+                
+                <div class="content">
                     <label data-string-id="name"></label>
                     <input type="text" id="userName"></input><br>
                     
                     <label data-string-id="variant"></label>
                     <select id="variant"></select><br>
-                 
+                
                     <label data-string-id="number-of-players"></label>
                     <select id="numberOfPlayers"></select><br>
                                 
                     <button id="start-game" data-string-id="start-game"></button>
                 </div>
-                        
-                <div id="settings" hidden="true" class="content">
+            </div>
+        </div>
+        
+        <div class="dialog" id="settings">
+            <div class="window">
+                <div>
+                    <label class="title" data-string-id="settings"></label>
+                    <label class="button close" data-dialog="settings"></label>
+                </div>
+                
+                <div class="content">
                     <label data-string-id="cards-type"></label>
                     <select id="cardType"></select><br>
                                 
@@ -116,37 +129,34 @@
                     <img class="backgroundPreview" src="data/backgrounds/blue.png"></img><br>
                     <img class="backgroundPreview" src="data/backgrounds/red.png"></img>
                 </div>
-                        
-                <div id="cronology" hidden="true" class="content">
+            </div>
+        </div>
+        
+        <div class="dialog" id="cronology">
+            <div class="window">
+                <div>
+                    <label class="title" data-string-id="cronology"></label>
+                    <label class="button close" data-dialog="cronology"></label>
                 </div>
-                        
-                <div id="about" hidden="true" class="content">
-                    <p>
-                        <a href="docs/index.html">Help</a>
-                    </p>
-                    
-                    <h2>Credits</h2>
-                    
-                    <h3>Code</h3>
-                    <p>Marco Scarpetta</p>
-                    
-                    <h3>Images</h3>
-                    <p>
-                        The images used inside this game are available online under free licences.
-                    </p>
-                    <ul>
-                        <li>Cards images</li>
-                        <ul>
-                            <li><a href="https://commons.wikimedia.org/wiki/Category:Naples_deck"
-                                target="_blank">Napoletane</a></li>
-                            <li><a href="https://commons.wikimedia.org/wiki/File:Carte_bergamasche.jpg"
-                                target="_blank">Bergamasche</a></li>
-                            <li><a href="https://commons.wikimedia.org/wiki/File:Carte_piacentine_al_completo.jpg"
-                                target="_blank">Piacentine</a></li>
-                        </ul>
-                        <li>Backgrounds</li>
-                        <p>Marco Scarpetta</p>
-                    </ul>
+                
+                <div class="content">
+                </div>
+            </div>
+        </div>
+        
+        <div class="dialog" id="about">
+            <div class="window">
+                <div>
+                    <label class="title" data-string-id="about"></label>
+                    <label class="button close" data-dialog="about"></label>
+                </div>
+                
+                <div class="content" id="about-content"><iframe id="about"
+                        width="100%"
+                        height="100%"
+                        frameborder="0"
+                        src="about.html">
+                    </iframe>
                 </div>
             </div>
         </div>

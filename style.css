@@ -29,7 +29,10 @@
 }
 
 body {
+    width:100%;
     height: 100%;
+    margin: 0px 0px;
+    padding: 0px 0px;
     overflow: hidden;
     image-rendering: auto;
 }
@@ -121,41 +124,6 @@ td.center {
 .userCard:hover {
     box-shadow: #ed0 0px 0px 5px 5px;
 }
-  
-
-.dialog {
-    background: rgba(0,0,0,0.3);
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    z-index: 100;
-}
-
-.dialog > div {
-    background: #fff;
-    margin-top: 50px;
-    padding: 20px 20px;
-    display: inline-block;
-    border-radius: 5px;
-    box-shadow: #666 0px 0px 5px 5px;
-    display: inline-block;
-    max-height: calc(var(--h) - 100px);
-    max-width: calc(var(--w) - 140px);
-}
-
-.content {
-    text-align: left;
-    max-height: calc(var(--h) - 160px);
-    margin: 40px 40px;
-    overflow: auto;
-}
-
-.content > * {
-    margin: 10px;
-}
 
 .backgroundPreview {
     display: inline-block;
@@ -166,26 +134,6 @@ td.center {
     color: #fff;
     text-shadow: 0px 0px 3px #000;
     text-align: right;
-}
-
-.toolbar {
-    display: block;
-}
-
-.toolbar > * {
-    text-decoration: none;
-    margin: 10px 10px;
-    opacity: 0.6;
-}
-
-.toolbar > *:hover {
-    opacity: 1;
-    border-bottom: 4px solid #0000ff;
-}
-
-.toolbar > .selected {
-    opacity: 1;
-    border-bottom: 4px solid #0000cc;
 }
 
 @keyframes message {
@@ -201,7 +149,7 @@ td.center {
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 200;
+    z-index: 90;
     float: right;
     display: block;
     text-align: right;
@@ -216,10 +164,99 @@ td.center {
 }
 
 #menu-btn {
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+}
+
+.dialog {
+    background: rgba(0,0,0,0.3);
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    z-index: 100;
+}
+
+.window {
+    max-height: calc(0.9 * var(--h));
+    max-width: calc(var(--w) - 0.1 * var(--h));
+    padding: 0px 0px;
+    margin: calc(0.05 * var(--h));
+    background-color: #ddd;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 5px 5px;
     display: inline-block;
-    border-radius: 5px;
-    padding:20px;
+}
+
+.title {
+    height: 40px;
+    line-height: 40px;
+    display: inline-block;
+}
+
+.content {
+    max-height: calc(0.9 * var(--h) - 80px);
+    max-width: calc(var(--w) - 0.1 * var(--h) - 40px);
+    padding: 20px 20px;
+    text-align: left;
+    overflow: auto;
+    background-color: #fff;
+}
+
+.content > * {
+    margin: 10px;
+}
+
+#about-content {
+    max-height: calc(0.9 * var(--h) - 40px);
+    max-width: calc(var(--w) - 0.1 * var(--h));
+    height: calc(0.9 * var(--h) - 40px);
+    width: calc(var(--w) - 0.1 * var(--h));
+    padding: 0px 0px;
+    margin: 0px 0px;
+}
+
+#about-content > iframe {
+    padding: 0px 0px;
+    margin: 0px 0px;
+}
+
+.button {
+    display: block;
+    padding: 0px 0px;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.button:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.close {
+    width: 40px;
+    height: 40px;
+    background-image: url('data/close.svg');
+    background-size: cover;
+    float: right;
+}
+
+.menu {
+    position: fixed;
     background: #fff;
+    bottom: 60px;
+    left: 0px;
+    z-index: 100;
+}
+
+.menu > label {
+    display: block;
+    background: #fff;
+    padding: 10px 10px;
+}
+
+.menu > label:hover {
+    background: #ddd;
 }
 
 #box{
@@ -232,8 +269,4 @@ td.center {
 .place{
     height:33%;
     border:1px solid #000;
-}
-
-#about {
-    text-align: left;
 }
