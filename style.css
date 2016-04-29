@@ -167,6 +167,10 @@ td.center {
     position: fixed;
     bottom: 0px;
     left: 0px;
+    width: 40px;
+    height: 40px;
+    background-image: url('data/menu.svg');
+    background-size: cover;
 }
 
 .dialog {
@@ -244,7 +248,7 @@ td.center {
 .menu {
     position: fixed;
     background: #fff;
-    bottom: 60px;
+    bottom: 40px;
     left: 0px;
     z-index: 100;
 }

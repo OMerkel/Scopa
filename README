@@ -40,9 +40,12 @@ LICENSING
 =========
  * The following files:
  
+    - about.html
     - index.html
     - style.css
     - data/icon.svg
+    - data/menu.svg
+    - data/close.svg
     - data/backgrounds/blue.png
     - data/backgrounds/green.png
     - data/backgrounds/red.png
