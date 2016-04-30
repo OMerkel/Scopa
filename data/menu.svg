@@ -22,7 +22,7 @@
      viewBox="0 0 40 40"
      xmlns="http://www.w3.org/2000/svg">
 
-  <rect x="5" y="10" width="30" height="4" style="fill: black"/>
-  <rect x="5" y="18" width="30" height="4" style="fill: black"/>
-  <rect x="5" y="26" width="30" height="4" style="fill: black"/>
+    <rect x="5" y="10" width="30" height="4" style="fill: black"/>
+    <rect x="5" y="18" width="30" height="4" style="fill: black"/>
+    <rect x="5" y="26" width="30" height="4" style="fill: black"/>
 </svg>

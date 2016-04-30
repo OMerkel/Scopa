@@ -20,7 +20,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
     <file>../index.html</file>
-    <file>../about.html</file>
     <file>../style.css</file>
     <file>../data/icon.svg</file>
     <file>../data/menu.svg</file>

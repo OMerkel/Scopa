@@ -38,6 +38,13 @@ UIHelper.prototype.displayMessage = function(data) {
     var br = document.createElement("br");
     
     for (var key in data) message.dataset[key] = data[key];
+    
+    //update messages log
+    var messagesLog = document.getElementById("messages-log");
+    messagesLog.appendChild(message.cloneNode(false));
+    messagesLog.appendChild(br.cloneNode(false));
+    
+    //display notification
     message.style.animation = `message ${this.duration}s forwards`;
     
     var helper = this;
@@ -399,7 +406,6 @@ function ScopaApplication()
     });
     
     document.querySelector("#summary-close-btn").addEventListener("click", function() {
-        document.querySelector("#summary").hidden = true;
         var newResponse = app.match.send({"command": "next"});
         app.analyze(newResponse);
     });
@@ -412,13 +418,7 @@ function ScopaApplication()
             document.body.removeChild(fixedCards[i]);
         }
         
-        document.querySelector("#match-end").hidden = true;
-        app.showDialog("new-game");        
-        document.querySelector("#menu").hidden = false;
-    });
-    
-    document.querySelector("#move-choice-close-btn").addEventListener("click", function() {
-        document.querySelector("#move-choice").hidden = true;
+        app.showDialog("new-game");
     });
     
     this.onResize();
@@ -704,6 +704,7 @@ ScopaApplication.prototype.analyze = function(response)
         
         if (response.infos[i].info === "choice")
         {
+            this.userCanPlay = true;
             var choices = document.querySelector("#choices");
             
             while (choices.firstChild) choices.removeChild(choices.firstChild);
@@ -718,6 +719,8 @@ ScopaApplication.prototype.analyze = function(response)
                     choices.appendChild(cardImg);
 
                     cardImg.addEventListener("click", (function(app, index){return function(){
+                        app.userCanPlay = false;
+                        
                         document.querySelector("#move-choice").hidden = true;
                         
                         var newResponse = app.match.send({"command": "human_play", "data": {
@@ -726,8 +729,6 @@ ScopaApplication.prototype.analyze = function(response)
                             take: index
                         }});
                         app.analyze(newResponse);
-                        
-                        app.userCanPlay = false;
                     }})(this, j));
                 }
                 choices.appendChild(document.createElement("br"));
@@ -766,6 +767,9 @@ ScopaApplication.prototype.analyze = function(response)
             }
             
             document.querySelector("#summary").hidden = false;
+            
+            //clear messages messages log
+            document.getElementById("messages-log").innerHTML = "";
             
             return;
         }
@@ -808,14 +812,15 @@ ScopaApplication.prototype.analyze = function(response)
                     cardImg.addEventListener("click", (function(app, card){return function(){
                         if (app.userCanPlay)
                         {
+                            app.userCanPlay = false;
+                            
                             app.playedCard = card;
                             var newResponse = app.match.send({"command": "human_play", "data": {
                                 player: localStorage.userName,
                                 card: card
                             }});
-                            app.analyze(newResponse);
                             
-                            app.userCanPlay = false;
+                            app.analyze(newResponse);
                         }
                     }})(this, card));
                 }

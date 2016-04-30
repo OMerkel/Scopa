@@ -88,6 +88,7 @@
             <label id="new-game-item" data-string-id="new-game" data-dialog="new-game"></label>
             <label id="settings-item" data-string-id="settings" data-dialog="settings"></label>
             <label id="cronology-item" data-string-id="cronology" data-dialog="cronology"></label>
+            <label id="help-item" data-string-id="help" data-dialog="help"></label>
             <label id="about-item" data-string-id="about" data-dialog="about"></label>
         </div>
         
@@ -140,6 +141,27 @@
                 </div>
                 
                 <div class="content">
+                    <h3 data-string-id="messages"></h3>
+                    <p id="messages-log"></p>
+                    <h3 data-string-id="moves"></h3>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dialog" id="help">
+            <div class="window">
+                <div>
+                    <label class="title" data-string-id="help"></label>
+                    <label class="button close" data-dialog="help"></label>
+                </div>
+                
+                <div class="content" id="about-content">
+                    <iframe id="help"
+                        width="100%"
+                        height="100%"
+                        frameborder="0"
+                        src="docs/index.html">
+                    </iframe>
                 </div>
             </div>
         </div>
@@ -151,40 +173,92 @@
                     <label class="button close" data-dialog="about"></label>
                 </div>
                 
-                <div class="content" id="about-content"><iframe id="about"
-                        width="100%"
-                        height="100%"
-                        frameborder="0"
-                        src="about.html">
-                    </iframe>
+                <div class="content">
+                    
+                    <p style="text-align: center">
+                        <img src="data/icon.svg" width="150px"></img>
+                    </p>
+                    
+                    <h4 style="text-align: center">
+                        Scopa
+                    </h4>
+                    
+                    <p style="text-align: center">Version 1.0</p>
+                    
+                    <p style="text-align: center">Copyright © 2016 Marco Scarpetta</p>
+                    
+                    <p>
+                        Scopa is free software: you can redistribute it and/or modify
+                        it under the terms of the GNU General Public License as published by
+                        the Free Software Foundation, either version 3 of the License, or
+                        (at your option) any later version.
+                    </p>
+                    <p>
+                        Scopa is distributed in the hope that it will be useful,
+                        but WITHOUT ANY WARRANTY; without even the implied warranty of
+                        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+                        GNU General Public License for more details.
+                    </p>
+                    <p>
+                        You should have received a copy of the GNU General Public License
+                        along with Scopa.  If not, see 
+                        <a href="http://www.gnu.org/licenses/" target="_blank">
+                        http://www.gnu.org/licenses/</a>.
+                    </p>
+                    
+                    <h2>Credits</h2>
+                    
+                    <h3>Code</h3>
+                    <p>Marco Scarpetta</p>
+                    
+                    <h3>Images</h3>
+                    <ul>
+                        <li>Napoletane cards: public domain images available <a href="https://commons.wikimedia.org/wiki/Category:Naples_deck" target="_blank">here</a></li>
+                        <li>Bergamasche cards: cropped from <a href="https://commons.wikimedia.org/wiki/File:Carte_bergamasche.jpg" target="_blank">this</a> public domain image</li>
+                        <li>Piacentine cards: cropped from <a href="https://commons.wikimedia.org/wiki/File:Carte_piacentine_al_completo.jpg" target="_blank">this</a> public domain image</li>
+                        <li>Backgrounds, icons: Marco Scarpetta</li>
+                    </ul>
                 </div>
             </div>
         </div>
         
         <div class="dialog" id="summary" hidden>
-            <div>
+            <div class="window">
+                <div>
+                    <label class="title" data-string-id="match-summary"></label>
+                    <label class="button close" data-dialog="summary" id="summary-close-btn"></label>
+                </div>
+                
                 <div class="content">
-                    <h3>Match summary</h3>
                     <table id="summaryTable">
                     </table>
-                    <a href="#" id="summary-close-btn" data-string-id="close"></a>
                 </div>
             </div>
         </div>
         
         <div class="dialog" id="match-end" hidden>
-            <div>
-                <h3 id="winner">
-                </h3>
-                <a href="#" id="match-end-close-btn">Close</a>
+            <div class="window">
+                <div>
+                    <label class="title" data-string-id="match-end"></label>
+                    <label class="button close" data-dialog="match-end" id="match-end-close-btn"></label>
+                </div>
+                
+                <div class="content">
+                    <h3 id="winner"></h3>
+                </div>
             </div>
         </div>
         
         <div class="dialog" id="move-choice" hidden>
-            <div>
-                <h3>Select the cards you want to take:</h3>
-                <div id="choices"></div>
-                <a href="#" id="move-choice-close-btn">Cancel</a>
+            <div class="window">
+                <div>
+                    <label class="title" data-string-id="move-choice"></label>
+                    <label class="button close" data-dialog="move-choice"></label>
+                </div>
+                
+                <div class="content">
+                    <div id="choices"></div>
+                </div>
             </div>
         </div>
         

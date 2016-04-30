@@ -32,6 +32,10 @@
     content: 'Cronologia';
 }
 
+[data-string-id='help']::before {
+    content: 'Aiuto';
+}
+
 [data-string-id='about']::before {
     content: 'Informazioni';
 }
@@ -64,6 +68,30 @@
 
 [data-string-id='background']::before {
     content: 'Sfondo:';
+}
+
+/* Cronology window*/
+[data-string-id='messages']::before {
+    content: 'Messaggi';
+}
+
+[data-string-id='moves']::before {
+    content: 'Mosse';
+}
+
+/* Match summary window*/
+[data-string-id='match-summary']::before {
+    content: 'Sommario partita';
+}
+
+/* Match end window*/
+[data-string-id='match-end']::before {
+    content: 'Fine partita';
+}
+
+/* Move choice window*/
+[data-string-id='move-choice']::before {
+    content: 'Seleziona le carte che vuoi prendere:';
 }
 
 /* Notifications */

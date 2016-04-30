@@ -32,6 +32,10 @@
     content: 'Cronology';
 }
 
+[data-string-id='help']::before {
+    content: 'Help';
+}
+
 [data-string-id='about']::before {
     content: 'About';
 }
@@ -66,6 +70,30 @@
     content: 'Background:';
 }
 
+/* Cronology window*/
+[data-string-id='messages']::before {
+    content: 'Messages';
+}
+
+[data-string-id='moves']::before {
+    content: 'Moves';
+}
+
+/* Match summary window*/
+[data-string-id='match-summary']::before {
+    content: 'Match summary';
+}
+
+/* Match end window*/
+[data-string-id='match-end']::before {
+    content: 'Match end';
+}
+
+/* Move choice window*/
+[data-string-id='move-choice']::before {
+    content: 'Select the cards you want to take:';
+}
+
 /* Notifications */
 [data-string-id='first_player']::before {
     content: attr(data-player) ' starts!';
@@ -81,8 +109,4 @@
 
 [data-string-id='3_equal_cards']::before {
     content: attr(data-player) ' has 3 equal cards';
-}
-
-[data-string-id='']::before {
-    content: '';
 }
