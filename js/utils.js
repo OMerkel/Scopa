@@ -60,7 +60,7 @@ function Cards(type, id, owners)
     this.id = id;
     this.owners = owners;
     this.covered = true;
-    this.sideCards = [];
+    this.side_cards = [];
 }
 
 Cards.prototype = new Array;
@@ -73,7 +73,7 @@ Cards.prototype.toObject = function()
         "owners": this.owners,
         "covered": this.covered,
         "length": this.length,
-        "sideCards": this.sideCards
+        "side_cards": this.side_cards
     }
 }
 
@@ -174,7 +174,7 @@ Cards.prototype.move = function(dest, arg)
 Cards.prototype.reset = function()
 {
     while (this.pop()) {}
-    this.sideCards = [];
+    this.side_cards = [];
 }
 
 function Player(name, type, team) 

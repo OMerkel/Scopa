@@ -45,11 +45,7 @@ ReBelloMatch.prototype = new ClassicMatch();
 ReBelloMatch.prototype.countPoints = function() {
     var primieraValues = [0, 16, 12, 13, 14, 15, 18, 21, 10, 10, 10];
     
-    var summary = {
-        "keys": ["Teams", "Cards", "Primiera", "Seven of Coins", "Re Bello",
-                 "Coins", "Scope", "Partial", "Total"],
-        "values": []
-    }
+    var summary = [];
     
     var points = [];
     var partial = [];
@@ -111,16 +107,16 @@ ReBelloMatch.prototype.countPoints = function() {
     for (var i=0; i<this.teams.length; i++) {
         this.teams[i].points += partial[i];
         
-        summary.values.push({
-            "Teams": this.teams[i].takenCards.owners,
-            "Cards": points[i][0],
-            "Primiera": points[i][1],
-            "Seven of Coins": points[i][2],
-            "Re Bello": points[i][4],
-            "Coins": points[i][3],
-            "Scope": this.teams[i].scope,
-            "Partial": partial[i],
-            "Total": this.teams[i].points
+        summary.push({
+            "players": this.teams[i].takenCards.owners,
+            "cards": points[i][0],
+            "primiera": points[i][1],
+            "seven_of_coins": points[i][2],
+            "re_bello": points[i][4],
+            "coins": points[i][3],
+            "scopa": this.teams[i].scope,
+            "partial": partial[i],
+            "total": this.teams[i].points
         });
         this.teams[i].takenCards.reset();
         this.teams[i].scope = 0;

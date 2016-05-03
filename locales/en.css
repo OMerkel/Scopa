@@ -84,6 +84,42 @@
     content: 'Match summary';
 }
 
+[data-string-id='team']::before {
+    content: 'Team';
+}
+
+[data-string-id='cards']::before {
+    content: 'Cards';
+}
+
+[data-string-id='seven-of-coins']::before {
+    content: 'Seven of coins';
+}
+
+[data-string-id='coins']::before {
+    content: 'Coins';
+}
+
+[data-string-id='primiera']::before {
+    content: 'Primiera';
+}
+
+[data-string-id='partial']::before {
+    content: 'Partial';
+}
+
+[data-string-id='total']::before {
+    content: 'Total';
+}
+
+[data-string-id='re-bello']::before {
+    content: 'Re bello';
+}
+
+[data-string-id='scopa']::before {
+    content: 'Scopa';
+}
+
 /* Match end window*/
 [data-string-id='match-end']::before {
     content: 'Match end';

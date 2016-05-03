@@ -570,7 +570,7 @@ ClassicMatch.prototype.completeMove = function(player)
         if (this._pendingMove.length == this.tableCards.toArray().length &&
             this.players[this.currentPlayer].hand.length != 0)
         {
-            this.players[player].team.takenCards.sideCards.push(new Card(this._pendingMove[0]));
+            this.players[player].team.takenCards.side_cards.push(new Card(this._pendingMove[0]));
             response.infos.push({"scopa": this.players[player].name});
         }
         
@@ -585,10 +585,7 @@ ClassicMatch.prototype.completeMove = function(player)
 ClassicMatch.prototype.countPoints = function() {
     var primieraValues = [0, 16, 12, 13, 14, 15, 18, 21, 10, 10, 10];
     
-    var summary = {
-        "keys": ["Teams", "Cards", "Primiera", "Seven of Coins", "Coins", "Scope", "Partial", "Total"],
-        "values": []
-    }
+    var summary = [];
     
     var points = [];
     var partial = [];
@@ -621,7 +618,7 @@ ClassicMatch.prototype.countPoints = function() {
         //primiera
         points[i][1] = suitsValues[0]+suitsValues[1]+suitsValues[2]+suitsValues[3];
         
-        partial[i] += this.teams[i].takenCards.sideCards.length;
+        partial[i] += this.teams[i].takenCards.side_cards.length;
     }
     
     for (var j=0; j<points[0].length; j++) {
@@ -647,15 +644,15 @@ ClassicMatch.prototype.countPoints = function() {
     for (var i=0; i<this.teams.length; i++) {
         this.teams[i].points += partial[i];
         
-        summary.values.push({
-            "Teams": this.teams[i].takenCards.owners,
-            "Cards": points[i][0],
-            "Primiera": points[i][1],
-            "Seven of Coins": points[i][2],
-            "Coins": points[i][3],
-            "Scope": this.teams[i].takenCards.sideCards.length,
-            "Partial": partial[i],
-            "Total": this.teams[i].points
+        summary.push({
+            "players": this.teams[i].takenCards.owners,
+            "cards": points[i][0],
+            "primiera": points[i][1],
+            "seven_of_coins": points[i][2],
+            "coins": points[i][3],
+            "scopa": this.teams[i].takenCards.side_cards.length,
+            "partial": partial[i],
+            "total": this.teams[i].points
         });
         this.teams[i].takenCards.reset();
     }

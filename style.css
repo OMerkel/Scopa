@@ -43,11 +43,12 @@ div, table, td, tr, body {
     padding: 0px 0px;
 }
 
-td {
-    background: rgba(255, 255, 255, 0.1);
+/*game table and cards*/
+.table td {
+    background: rgba(1, 1, 1, 0.1);
 }
 
-td.center {
+.table td.center {
     background: none;
 }
 
@@ -126,12 +127,7 @@ td.center {
     box-shadow: #ed0 0px 0px 5px 5px;
 }
 
-.backgroundPreview {
-    display: inline-block;
-    width: calc((var(--w) / 4));
-    height: calc((var(--h) / 10));
-}
-
+/*notifications*/
 @keyframes message {
     0% {opacity: 1;}
     10% {opacity: 1; box-shadow: #f00 0px 0px 5px 5px;}
@@ -159,16 +155,7 @@ td.center {
     border-radius: 5px;
 }
 
-#menu-btn {
-    position: fixed;
-    bottom: 0px;
-    left: 0px;
-    width: 40px;
-    height: 40px;
-    background-image: url('data/menu.svg');
-    background-size: cover;
-}
-
+/*all windows*/
 .dialog {
     background: rgba(0,0,0,0.3);
     position: fixed;
@@ -211,7 +198,8 @@ td.center {
     margin: 10px;
 }
 
-#about-content {
+/*help window*/
+#help-content {
     max-height: calc(0.9 * var(--h) - 40px);
     max-width: calc(var(--w) - 0.1 * var(--h));
     height: calc(0.9 * var(--h) - 40px);
@@ -220,11 +208,50 @@ td.center {
     margin: 0px 0px;
 }
 
-#about-content > iframe {
+#help-content > iframe {
     padding: 0px 0px;
     margin: 0px 0px;
 }
 
+/*settings window*/
+.backgroundPreview {
+    display: inline-block;
+    width: calc((var(--w) / 4));
+    height: calc((var(--h) / 10));
+}
+
+/*move choice window*/
+#choices img {
+    padding: 10px;
+}
+
+/*summary windows*/
+#summary td {
+    padding: 2px 10px;
+    border: 2px solid #ddf;
+}
+
+#summary td:not(:first-child) {
+    text-align: center;
+}
+
+#summary table {
+    border-collapse: collapse;
+}
+
+#summary tr:first-child {
+    background: #eee;
+}
+
+#summary tr:nth-last-child(2) {
+    background: #dff;
+}
+
+#summary tr:last-child {
+    background: #cff;
+}
+
+/*buttons*/
 .button {
     display: block;
     padding: 0px 0px;
@@ -243,6 +270,18 @@ td.center {
     float: right;
 }
 
+/*menu button*/
+#menu-btn {
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    width: 40px;
+    height: 40px;
+    background-image: url('data/menu.svg');
+    background-size: cover;
+}
+
+/*menu*/
 .menu {
     position: fixed;
     background: #fff;
@@ -259,16 +298,4 @@ td.center {
 
 .menu > label:hover {
     background: #ddd;
-}
-
-#box{
-    background: #efefef;
-    height: 100px;
-    width: 100px;
-    height: 300px;
-}
-
-.place{
-    height:33%;
-    border:1px solid #000;
 }

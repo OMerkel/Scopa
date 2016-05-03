@@ -63,14 +63,14 @@ CirullaMatch.prototype.giveCardsToPlayers = function(response)
         if (sum <= 9)
         {
             faceup = true;
-            this.players[i].team.takenCards.sideCards.length += 3;
+            this.players[i].team.takenCards.side_cards.length += 3;
             response.infos.push({info: "cards_value_lt_10", data: this.players[i].name});
         }
         
         else if (sum <= 15 && sevenBello)
         {
             faceup = true;
-            this.players[i].team.takenCards.sideCards.length += 3;
+            this.players[i].team.takenCards.side_cards.length += 3;
             response.infos.push({info: "cards_value_lt_10", data: this.players[i].name});
             
             move.cards[sevenBello].newValue = 1;
@@ -81,7 +81,7 @@ CirullaMatch.prototype.giveCardsToPlayers = function(response)
             move.cards[1].value == move.cards[2].value)
         {
             faceup = true;
-            this.players[i].team.takenCards.sideCards.length += 10;
+            this.players[i].team.takenCards.side_cards.length += 10;
             response.infos.push({info: "3_equal_cards", data: this.players[i].name});
         }
         else if (move.cards[0].value == move.cards[1].value && sevenBello == 2||
@@ -89,7 +89,7 @@ CirullaMatch.prototype.giveCardsToPlayers = function(response)
             move.cards[1].value == move.cards[2].value && sevenBello == 0)
         {
             faceup = true;
-            this.players[i].team.takenCards.sideCards.length += 10;
+            this.players[i].team.takenCards.side_cards.length += 10;
             response.infos.push({info: "3_equal_cards", data: this.players[i].name});
             
             var cardIndex = sevenBello == 0 ? 1 : 0;

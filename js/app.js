@@ -129,13 +129,13 @@ GraphicsManager.prototype.drawCardImg = function(img)
 GraphicsManager.prototype.updateDeckImg = function(img, cards)
 {
     img.dataset.length = cards.length;
-    img.dataset.sideCardsLength = cards.sideCards.length;
+    img.dataset.sideCardsLength = cards.side_cards.length;
     
-    var card = cards.sideCards[0];
-    for (var i=0; i<cards.sideCards.length; i++)
+    var card = cards.side_cards[0];
+    for (var i=0; i<cards.side_cards.length; i++)
     {
-        if (cards.sideCards[i])
-            card = cards.sideCards[i];
+        if (cards.side_cards[i])
+            card = cards.side_cards[i];
     }
     if (card) img.dataset.sideCard = `${card.value}${this.suits[card.suit]}`;
     
@@ -744,29 +744,36 @@ ScopaApplication.prototype.analyze = function(response)
             
             var table = document.querySelector("#summaryTable");
             
-            while (table.firstChild) table.removeChild(table.firstChild);
+            //remove all columns except the first one
+            for (var j=0; j<table.children.length; j++)
+                for (var k=table.children[j].children.length-1; k>0; k--)
+                    table.children[j].removeChild(table.children[j].children[k]);
             
-            for (var j=0; j<summary.keys.length; j++)
+            for (var j=0; j<summary.length; j++)
             {
-                var tr = document.createElement("tr");
-                tr.dataset.row = summary.keys[j];
-                var td = document.createElement("td");
-                td.appendChild(document.createTextNode(summary.keys[j]));
-                tr.appendChild(td);
-                table.appendChild(tr);
-            }
-            
-            for (var k=0; k<summary.values.length; k++)
-            {
-                for (var key in summary.values[k])
+                summary[j].players = summary[j].players.length == 1 ?
+                    summary[j].players[0]: `${summary[j].players[0]}, ${summary[j].players[1]}`;
+                
+                for (var k=0; k<table.children.length; k++)
                 {
-                    var td = document.createElement("td");
-                    td.appendChild(document.createTextNode(""+summary.values[k][key]));
-                    document.querySelector(`tr[data-row='${key}']`).appendChild(td);
+                    var row = table.children[k];
+                    console.log(row.id)
+                    
+                    if (summary[j][row.id] != undefined)
+                    {
+                        var td = document.createElement("td");
+                        td.appendChild(document.createTextNode(`${summary[j][row.id]}`));
+                        row.appendChild(td);
+                        row.hidden = false;
+                    }
+                    else
+                    {
+                        row.hidden = true;
+                    }
                 }
             }
             
-            document.querySelector("#summary").hidden = false;
+            this.showDialog("summary");
             
             //clear messages messages log
             document.getElementById("messages-log").innerHTML = "";
