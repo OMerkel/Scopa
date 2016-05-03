@@ -84,6 +84,42 @@
     content: 'Sommario partita';
 }
 
+[data-string-id='team']::before {
+    content: 'Squadra';
+}
+
+[data-string-id='cards']::before {
+    content: 'Carte';
+}
+
+[data-string-id='seven-of-coins']::before {
+    content: 'Sette bello';
+}
+
+[data-string-id='coins']::before {
+    content: 'Denari';
+}
+
+[data-string-id='primiera']::before {
+    content: 'Primiera';
+}
+
+[data-string-id='partial']::before {
+    content: 'Parziale';
+}
+
+[data-string-id='total']::before {
+    content: 'Totale';
+}
+
+[data-string-id='re-bello']::before {
+    content: 'Re bello';
+}
+
+[data-string-id='scopa']::before {
+    content: 'Scope';
+}
+
 /* Match end window*/
 [data-string-id='match-end']::before {
     content: 'Fine partita';
