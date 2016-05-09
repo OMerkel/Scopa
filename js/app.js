@@ -397,6 +397,38 @@ function ScopaApplication()
         });
     }
     
+    //windows movements
+    var titles = document.querySelectorAll(".titlebar > *:first-child");
+    for (var i=0; i<titles.length; i++)
+    {
+        titles[i].addEventListener("mousedown", function(event) {
+            if (event.button == 0)
+            {
+                var dialog = event.target.parentNode.parentNode;
+                dialog.style.top = `${dialog.offsetTop}px`;
+                dialog.style.left = `${dialog.offsetLeft}px`;
+                dialog.style.margin =  "0px";
+                dialog.style.position = "fixed";
+                
+                
+                var mouseMoveHandler = function(evt) {
+                    dialog.style.top = `${dialog.offsetTop+evt.movementY}px`;
+                    dialog.style.left = `${dialog.offsetLeft+evt.movementX}px`;
+                }
+                
+                window.addEventListener("mousemove", mouseMoveHandler);
+                
+                var endMove;
+                endMove = function(evt) {
+                    window.removeEventListener("mousemove", mouseMoveHandler);
+                    window.removeEventListener("mouseup", endMove);
+                }
+                
+                window.addEventListener("mouseup", endMove);
+            }
+        });
+    }
+    
     document.querySelector("#start-game").addEventListener("click", function() {
         app.onStartGame();
     });
@@ -470,7 +502,14 @@ ScopaApplication.prototype.showDialog = function(dialogId)
     for (var i=0; i<dialogs.length; i++) 
     {
         if (dialogs[i].id != dialogId) dialogs[i].hidden = true;
-        else dialogs[i].hidden = false;
+        else
+        {
+            //reset window's margin
+            dialogs[i].querySelector(".window").style.margin = "calc(0.05 * var(--h))";
+            dialogs[i].querySelector(".window").style.position = "static";
+            
+            dialogs[i].hidden = false;
+        }
     }
 }
 
