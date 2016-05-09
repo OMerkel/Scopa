@@ -6,6 +6,9 @@ Copying and distribution of this file, with or without modification,
 are permitted in any medium without royalty provided the copyright
 notice and this notice are preserved.
 
+GENERAL INFORMATIONS
+====================
+
 This software aims to provide an implementation of the famous Italian
 card game "Scopa" (https://en.wikipedia.org/wiki/Scopa). It is written
 in Javascript and can work in any modern browser.
@@ -13,6 +16,7 @@ It provides 5 variations of the original game and 3 types of cards.
 
 USAGE
 =====
+
 Open the file index.html with a web browser.
 
 Alternatively you can use the Qt application, to be built as described in the
@@ -38,6 +42,7 @@ You can use the following command to run the application:
 
 LICENSING
 =========
+
  * The following files:
  
     - index.html
@@ -49,7 +54,7 @@ LICENSING
     - data/backgrounds/green.png
     - data/backgrounds/red.png
     - docs/index.html
-    - docs/protocol.html
+    - docs/game-class.html
     - docs/style.css
     - js/app.js
     - js/cirulla.js
