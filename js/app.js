@@ -199,23 +199,30 @@ GraphicsManager.prototype.updateCanvasCache = function(onLoad)
         canvas.width = manager.cw;
         canvas.height = manager.ch;
         
-        tmp.width = Math.floor(manager.cardTypes[manager.cardsType].w);
-        tmp.height = Math.floor(manager.cardTypes[manager.cardsType].h);
+        var n = 1;
+        while (n*manager.cw < manager.cardTypes[manager.cardsType].w)
+            n = n*2;
+        
+        tmp.width = manager.cw*n;
+        tmp.height = manager.ch*n;
         tmpCtx = tmp.getContext("2d");
         
-        tmpCtx.drawImage(image, 0, 0);
+        tmpCtx.drawImage(image, 0, 0,
+                         manager.cardTypes[manager.cardsType].w,
+                         manager.cardTypes[manager.cardsType].h,
+                         0, 0,
+                         manager.cw*n,
+                         manager.ch*n);
         
-        var n=2;
-        while (Math.floor(manager.cardTypes[manager.cardsType].w/n) > manager.cw)
+        while (n > 1)
         {
-            tmpCtx.drawImage(tmp,
+            tmpCtx.drawImage(tmp, 0, 0,
+                             manager.cw*n,
+                             manager.ch*n,
                              0, 0,
-                             Math.floor(manager.cardTypes[manager.cardsType].w/n*2),
-                             Math.floor(manager.cardTypes[manager.cardsType].h/n*2),
-                             0, 0,
-                             Math.floor(manager.cardTypes[manager.cardsType].w/n),
-                             Math.floor(manager.cardTypes[manager.cardsType].h/n));
-            n = n*2;
+                             manager.cw*(n/2),
+                             manager.ch*(n/2));
+            n = n/2;
         }
         
         var ctx = canvas.getContext("2d");
@@ -236,10 +243,11 @@ GraphicsManager.prototype.updateCanvasCache = function(onLoad)
         ctx.clip();
         
         ctx.drawImage(tmp, 0, 0,
-                      Math.floor(manager.cardTypes[manager.cardsType].w/n*2),
-                      Math.floor(manager.cardTypes[manager.cardsType].h/n*2),
+                      manager.cw,
+                      manager.ch,
                       0, 0,
-                      manager.cw, manager.ch);
+                      manager.cw,
+                      manager.ch);
         
         manager.canvasCache[`${value}${manager.suits[suit]}`] = canvas;
         
