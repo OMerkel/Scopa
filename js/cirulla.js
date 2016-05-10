@@ -73,8 +73,8 @@ CirullaMatch.prototype.giveCardsToPlayers = function(response)
             this.players[i].team.takenCards.side_cards.length += 3;
             response.infos.push({info: "cards_value_lt_10", data: this.players[i].name});
             
-            move.cards[sevenBello].newValue = 1;
-            this.players[i].hand[sevenBello].newValue = 1;
+            move.cards[sevenBello].new_value = 1;
+            this.players[i].hand[sevenBello].new_value = 1;
         }
         
         if (move.cards[0].value == move.cards[1].value &&
@@ -93,8 +93,8 @@ CirullaMatch.prototype.giveCardsToPlayers = function(response)
             response.infos.push({info: "3_equal_cards", data: this.players[i].name});
             
             var cardIndex = sevenBello == 0 ? 1 : 0;
-            move.cards[sevenBello].newValue = this.players[i].hand[cardIndex].value;
-            this.players[i].hand[sevenBello].newValue = this.players[i].hand[cardIndex].value;
+            move.cards[sevenBello].new_value = this.players[i].hand[cardIndex].value;
+            this.players[i].hand[sevenBello].new_value = this.players[i].hand[cardIndex].value;
         }
         
         if (faceup)
@@ -115,14 +115,14 @@ CirullaMatch.prototype.giveCardsToPlayers = function(response)
 
 CirullaMatch.prototype.take = function(card, tableCards) {
     var result = [];
-    var cardValue = card.newValue ? card.newValue : card.value;
+    var cardValue = card.new_value ? card.new_value : card.value;
 
     var combinationsArray = combinations(tableCards.length);
     for (var i=0; i<combinationsArray.length; i++) {
         var tableValue = 0;
         for (var j=0; j<combinationsArray[i].length; j++) {
-            if (tableCards[combinationsArray[i][j]].newValue)
-                tableValue = tableValue + tableCards[combinationsArray[i][j]].newValue;
+            if (tableCards[combinationsArray[i][j]].new_value)
+                tableValue = tableValue + tableCards[combinationsArray[i][j]].new_value;
             else
                 tableValue = tableValue + tableCards[combinationsArray[i][j]].value;
             combinationsArray[i][j] = tableCards[combinationsArray[i][j]];
@@ -139,7 +139,7 @@ CirullaMatch.prototype.take = function(card, tableCards) {
     var tableCardsArray = [];
     
     for (var i=0; i<tableCards.length; i++) {
-        if (tableCards[i].value == 1 || tableCards[i].newValue == 1) ace = true;
+        if (tableCards[i].value == 1 || tableCards[i].new_value == 1) ace = true;
         tableCardsArray.push(tableCards[i]);
     }
     

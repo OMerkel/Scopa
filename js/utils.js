@@ -48,9 +48,10 @@ function combinations(n) {
 function Card(card)
 {
     if (card) {
-        this.suit = card.suit
-        this.value = card.value
-        this.id = card.id
+        this.suit = card.suit;
+        this.value = card.value;
+        this.id = card.id;
+        this.new_value = card.new_value;
     }
 }
 

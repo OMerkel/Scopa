@@ -87,14 +87,14 @@ function GraphicsManager(cardsType)
 GraphicsManager.prototype.updateCardImg = function(img, card)
 {
     img.dataset.card = `${card.value}${this.suits[card.suit]}`;
-    if (card.newValue) img.dataset.newValue = card.newValue;
+    if (card.new_value) img.dataset.new_value = card.new_value;
     
     this.drawCardImg(img);
 }
 
 GraphicsManager.prototype.drawCardImg = function(img)
 {
-    if (img.dataset.newValue) {
+    if (img.dataset.new_value) {
         var canvas = document.createElement("canvas");
         
         canvas.width = this.cw;
@@ -105,17 +105,17 @@ GraphicsManager.prototype.drawCardImg = function(img)
                       0, 0, this.cw, this.ch,
                       0, 0, this.cw, this.ch);
         
-        if (img.dataset.newValue)
+        if (img.dataset.new_value)
         {
             var m = Math.floor(this.cw/10);
             var s = Math.floor(this.ch/8);
             
             ctx.font = `${s}px serif`;
-            var text = ctx.measureText(img.dataset.newValue);
+            var text = ctx.measureText(img.dataset.new_value);
             ctx.fillStyle = "red";
             ctx.fillRect(canvas.width-text.width-2*m, 0, text.width+2*m, s+2*m);
             ctx.fillStyle = "black";
-            ctx.fillText(img.dataset.newValue, canvas.width-text.width-m, s+m);
+            ctx.fillText(img.dataset.new_value, canvas.width-text.width-m, s+m);
             
             img.src = canvas.toDataURL();
         }
