@@ -54,7 +54,7 @@ function Card(card)
     }
 }
 
-function Cards(type, id, owners)
+function CardsGroup(type, id, owners)
 {
     this.type = type;
     this.id = id;
@@ -63,9 +63,9 @@ function Cards(type, id, owners)
     this.side_cards = [];
 }
 
-Cards.prototype = new Array;
+CardsGroup.prototype = new Array;
 
-Cards.prototype.toObject = function()
+CardsGroup.prototype.toObject = function()
 {
     return {
         "id": this.id,
@@ -77,7 +77,7 @@ Cards.prototype.toObject = function()
     }
 }
 
-Cards.prototype.toArray = function() 
+CardsGroup.prototype.toArray = function() 
 {
     var array = [];
     for (var i=0; i<this.length; i++) {
@@ -86,7 +86,7 @@ Cards.prototype.toArray = function()
     return array;
 }
 
-Cards.prototype.getById = function(id) 
+CardsGroup.prototype.getById = function(id) 
 {
     for (var i=0; i<this.length; i++) {
         if (this[i].id == id) {
@@ -95,7 +95,7 @@ Cards.prototype.getById = function(id)
     }
 }
 
-Cards.prototype.popById = function(id) 
+CardsGroup.prototype.popById = function(id) 
 {
     for (var i=0; i<this.length; i++) {
         if (this[i].id == id) {
@@ -104,7 +104,7 @@ Cards.prototype.popById = function(id)
     }
 }
 
-Cards.prototype.insert = function(card) 
+CardsGroup.prototype.insert = function(card) 
 {
     var i=0;
     while (this[i]) {i++;}
@@ -112,7 +112,7 @@ Cards.prototype.insert = function(card)
     return i;
 }
 
-Cards.prototype.populate = function() 
+CardsGroup.prototype.populate = function() 
 {
     while (this.length > 0)
     {
@@ -125,7 +125,7 @@ Cards.prototype.populate = function()
     }
 }
 
-Cards.prototype.mix = function() 
+CardsGroup.prototype.mix = function() 
 {
     for (var i=0; i<this.length; i++) 
     {
@@ -143,7 +143,7 @@ Cards.prototype.mix = function()
     }
 }
 
-Cards.prototype.move = function(dest, arg)
+CardsGroup.prototype.move = function(dest, arg)
 {
     var move = {
         "source": this.id,
@@ -171,7 +171,7 @@ Cards.prototype.move = function(dest, arg)
     return move;
 }
 
-Cards.prototype.reset = function()
+CardsGroup.prototype.reset = function()
 {
     while (this.pop()) {}
     this.side_cards = [];
@@ -182,7 +182,7 @@ function Player(name, type, team)
     this.type = type;
     this.name = name;
     this.team = team;
-    this.hand = new Cards("hand", "hand_"+name, [name]);
+    this.hand = new CardsGroup("hand", "hand_"+name, [name]);
     if (type == "cpu")
     {
         this.memory = {};

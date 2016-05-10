@@ -78,12 +78,12 @@ ClassicMatch.prototype.start = function(players)
         this.teams = [
         {
             "name": players[0].name,
-            "takenCards": new Cards("deck", "cards_0", [players[0].name]),
+            "takenCards": new CardsGroup("deck", "cards_0", [players[0].name]),
             "points": 0
         },
         {
             "name": players[1].name,
-            "takenCards": new Cards("deck", "cards_1", [players[1].name]),
+            "takenCards": new CardsGroup("deck", "cards_1", [players[1].name]),
             "points": 0
         }
         ];
@@ -101,12 +101,12 @@ ClassicMatch.prototype.start = function(players)
         this.teams = [
         {
             "name": players[0].name+"/"+players[2].name,
-            "takenCards": new Cards("deck", "cards_0", [players[0].name, players[2].name]),
+            "takenCards": new CardsGroup("deck", "cards_0", [players[0].name, players[2].name]),
             "points": 0
         },
         {
             "name": players[1].name+"/"+players[3].name,
-            "takenCards": new Cards("deck", "cards_1", [players[1].name, players[3].name]),
+            "takenCards": new CardsGroup("deck", "cards_1", [players[1].name, players[3].name]),
             "points": 0
         }
         ];
@@ -124,10 +124,10 @@ ClassicMatch.prototype.start = function(players)
         )
     }
     
-    this.deck = new Cards("deck", "main_deck", []);
+    this.deck = new CardsGroup("deck", "main_deck", []);
     this.deck.populate();
     this.deck.mix();
-    this.tableCards = new Cards("table", "table_cards", []);
+    this.tableCards = new CardsGroup("table", "table_cards", []);
     this.tableCards.covered = false;
     this.lastTaker = 0;
     this.currentPlayer = Math.floor(Math.random()*this.players.length);
