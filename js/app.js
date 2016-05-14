@@ -804,7 +804,6 @@ ScopaApplication.prototype.analyze = function(response)
                 for (var k=0; k<table.children.length; k++)
                 {
                     var row = table.children[k];
-                    console.log(row.id)
                     
                     if (summary[j][row.id] != undefined)
                     {

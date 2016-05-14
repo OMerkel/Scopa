@@ -148,3 +148,37 @@ CirullaMatch.prototype.take = function(card, tableCards) {
     
     return result;
 }
+
+CirullaMatch.prototype.extraPoints = function(teamSummary)
+{
+    var fromBottom = 0;
+    var fromTop = 0;
+    
+    if (teamSummary.coins.length === 10)
+    {
+        teamSummary.total = 51;
+    }
+    else
+    {
+        for (var i=1; i<=10; i++)
+        {
+            for (var j=0; j<teamSummary.coins.length; j++)
+            {
+                if (teamSummary.coins[j].value == i && fromBottom == i-1)
+                    fromBottom += 1;
+                if (teamSummary.coins[j].value == 11-i && fromTop == i-1)
+                    fromTop += 1;
+            }
+        }
+        fromTop = fromTop >= 3 ? fromTop : 0;
+        fromBottom = fromBottom >= 3 ? fromBottom : 0;
+    }
+    
+    teamSummary.scopa += fromTop + fromBottom;
+    teamSummary.coins = teamSummary.coins.length;
+    teamSummary.partial = teamSummary.scopa;
+    
+    
+    
+    return teamSummary;
+}

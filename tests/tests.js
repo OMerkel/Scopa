@@ -25,10 +25,114 @@
  *
  */
 
+function ClassicMatchTest() 
+{
+    this.name = "Classic match test";
+    this.cardsToPlayers = 1;
+    CardsGroup.prototype.populate = function() 
+    {
+        while (this.length > 0)
+        {
+            this.pop();
+        }
+        for (var i=0; i<4; i++) {
+            for (var j=1; j<11; j++) {
+                this.push({"suit": i, "value": j, "id": j+10*i});
+            }
+        }
+    }
+}
+ClassicMatchTest.prototype = new ClassicMatch();
+
+function ScoponeMatchTest() 
+{
+    this.name = "Scopone match test";
+    this.cardsToPlayers = 1;
+    CardsGroup.prototype.populate = function() 
+    {
+        while (this.length > 0)
+        {
+            this.pop();
+        }
+        for (var i=0; i<4; i++) {
+            for (var j=1; j<2; j++) {
+                this.push({"suit": i, "value": j, "id": j+10*i});
+            }
+        }
+    }
+}
+ScoponeMatchTest.prototype = new ScoponeMatch();
+
+function CucitaMatchTest() 
+{
+    this.name = "Cucita match test";
+    this.cardsToPlayers = 3;
+    CardsGroup.prototype.populate = function() 
+    {
+        this.push(
+            {suit: 0, value:1, id: "01"},
+            {suit: 0, value:2, id: "02"},
+            {suit: 0, value:3, id: "03"},
+            {suit: 0, value:4, id: "04"},
+            {suit: 0, value:5, id: "05"},
+            {suit: 0, value:6, id: "06"},
+            {suit: 0, value:7, id: "07"},
+            {suit: 0, value:8, id: "08"},
+            {suit: 0, value:9, id: "09"},
+            {suit: 0, value:10, id: "010"},
+            {suit: 1, value:1, id: "10"},
+            {suit: 2, value:1, id: "20"}
+        )
+    }
+}
+CucitaMatchTest.prototype = new CucitaMatch();
+
+function CirullaMatchTest() 
+{
+    this.name = "Cirulla match test";
+    this.cardsToPlayers = 3;
+    CardsGroup.prototype.populate = function() 
+    {
+        this.push(
+            {suit: 0, value:1, id: "01"},
+            {suit: 0, value:2, id: "02"},
+            {suit: 0, value:3, id: "03"},
+            {suit: 0, value:4, id: "04"},
+            {suit: 0, value:5, id: "05"},
+            {suit: 0, value:6, id: "06"},
+            {suit: 0, value:7, id: "07"},
+            {suit: 0, value:8, id: "08"},
+            {suit: 0, value:9, id: "09"},
+            {suit: 0, value:10, id: "010"},
+            {suit: 1, value:1, id: "10"},
+            {suit: 2, value:1, id: "20"}
+        )
+    }
+}
+CirullaMatchTest.prototype = new CirullaMatch();
+
+function ReBelloMatchTest() 
+{
+    this.name = "Re Bello match test";
+    this.cardsToPlayers = 1;
+    CardsGroup.prototype.populate = function() 
+    {
+        while (this.length > 0)
+        {
+            this.pop();
+        }
+        for (var i=0; i<4; i++) {
+            for (var j=9; j<11; j++) {
+                this.push({"suit": i, "value": j, "id": j+10*i});
+            }
+        }
+    }
+}
+ReBelloMatchTest.prototype = new ReBelloMatch();
+
 function TestGame() 
 {
     this.name = "Test Game";
-    this.number_of_players = [0];
 }
 
 TestGame.prototype.response = function() {
@@ -121,3 +225,8 @@ CardsChoiceTest.prototype.response = function() {
 
 app.registerGame(SummaryTest);
 app.registerGame(CardsChoiceTest);
+app.registerGame(ClassicMatchTest);
+app.registerGame(ScoponeMatchTest);
+app.registerGame(CirullaMatchTest);
+app.registerGame(CucitaMatchTest);
+app.registerGame(ReBelloMatchTest);

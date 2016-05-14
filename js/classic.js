@@ -33,6 +33,8 @@ function ClassicMatch()
     this.cardsToPlayers = 3;
     this.cardsToTable = 4;
     
+    this.assignedPoints = ["cards", "primiera", "seven_of_coins", "coins"];
+    
     this.aiValues = {
         no_takes_2_equal_cards:         function (mem) {return 1},
         no_takes_not_coin:              function (mem) {return 2},
@@ -582,21 +584,54 @@ ClassicMatch.prototype.completeMove = function(player)
     return response;
 }
 
+ClassicMatch.prototype.assignPoints = function(summary)
+{
+    for (var i=0; i<this.assignedPoints.length; i++)
+    {
+        var max = 0;
+        var same = false;
+        for (var j=1; j<summary.length; j++)
+        {
+            if (summary[j][this.assignedPoints[i]] > summary[max][this.assignedPoints[i]])
+            {
+                max = j;
+                same = false;
+            }
+            
+            else if (summary[j][this.assignedPoints[i]] === summary[max][this.assignedPoints[i]])
+            {
+                same = true;
+            }
+        }
+        
+        if (!same) summary[max].partial += 1;
+    }
+}
+
+
+ClassicMatch.prototype.extraPoints = function(teamSummary)
+{
+    teamSummary.coins = teamSummary.coins.length;
+    teamSummary.partial = teamSummary.scopa;
+    
+    return teamSummary;
+}
+
 ClassicMatch.prototype.countPoints = function() {
     var primieraValues = [0, 16, 12, 13, 14, 15, 18, 21, 10, 10, 10];
     
     var summary = [];
     
-    var points = [];
-    var partial = [];
-    
     for (var i=0; i<this.teams.length; i++)
     {
-        points[i] = [0,0,0,0];
-        partial[i] = 0;
-        
-        //cards
-        points[i][0] = (this.teams[i].takenCards.length);
+        var teamSummary = {
+            players: this.teams[i].takenCards.owners,
+            cards: this.teams[i].takenCards.length,
+            primiera: 0,
+            seven_of_coins: 0,
+            coins: [],
+            scopa: this.teams[i].takenCards.side_cards.length
+        };
         
         var suitsValues = [0,0,0,0];
         
@@ -608,54 +643,32 @@ ClassicMatch.prototype.countPoints = function() {
             if (this.teams[i].takenCards[j].suit === 0)
             {
                 //coins
-                points[i][3] += 1;
+                teamSummary.coins.push(new Card(this.teams[i].takenCards[j]));
                 
                 //seven bello
-                if (this.teams[i].takenCards[j].value === 7) points[i][2] = 1;
+                if (this.teams[i].takenCards[j].value === 7)
+                    teamSummary.seven_of_coins = 1;
             }
         }
         
         //primiera
-        points[i][1] = suitsValues[0]+suitsValues[1]+suitsValues[2]+suitsValues[3];
+        teamSummary.primiera = suitsValues[0]+suitsValues[1]+suitsValues[2]+suitsValues[3];
         
-        partial[i] += this.teams[i].takenCards.side_cards.length;
+        this.extraPoints(teamSummary);
+        
+        summary.push(teamSummary);
     }
     
-    for (var j=0; j<points[0].length; j++) {
-        var max = 0;
-        var same = false;
-        for (var i=1; i<this.teams.length; i++)
-        {
-            if (points[i][j] > points[max][j])
-            {
-                max = i;
-                same = false;
-            }
-            
-            else if (points[i][j] === points[max][j])
-            {
-                same = true;
-            }
-        }
-        
-        if (!same) partial[max] += 1;
-    }
+    this.assignPoints(summary);
     
     for (var i=0; i<this.teams.length; i++) {
-        this.teams[i].points += partial[i];
-        
-        summary.push({
-            "players": this.teams[i].takenCards.owners,
-            "cards": points[i][0],
-            "primiera": points[i][1],
-            "seven_of_coins": points[i][2],
-            "coins": points[i][3],
-            "scopa": this.teams[i].takenCards.side_cards.length,
-            "partial": partial[i],
-            "total": this.teams[i].points
-        });
         this.teams[i].takenCards.reset();
+        if (!summary[i].total)
+            summary[i].total = this.teams[i].points + summary[i].partial;
+        
+        this.teams[i].points = summary[i].total;
     }
+    
     return summary;
 }
 

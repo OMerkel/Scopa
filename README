@@ -68,6 +68,8 @@ LICENSING
     - qt-application/main.cpp
     - qt-application/scopa.pro
     - qt-application/scopa.qrc
+    - tests/generate.sh
+    - tests/tests.js
     
    are part of the Scopa software, Copyright (C) 2016 Marco Scarpetta <marcoscarpetta02@gmail.com>
 
