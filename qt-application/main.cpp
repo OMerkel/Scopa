@@ -26,11 +26,16 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    QMainWindow w;
-    QWebEngineView* view = new QWebEngineView();
-    w.setCentralWidget(view);
-    view->load(QUrl("qrc:/index.html"));
-    w.show();
+    QMainWindow mainWindow;
+    QWebEngineView view;
+    QIcon icon(":/data/icon.png");
+    
+    mainWindow.setCentralWidget(&view);
+    mainWindow.setWindowIcon(icon);
+    mainWindow.setWindowTitle("Scopa");
+    
+    view.load(QUrl("qrc:/index.html"));
+    mainWindow.show();
 
     return a.exec();
 }

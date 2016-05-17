@@ -47,6 +47,7 @@ LICENSING
  
     - index.html
     - style.css
+    - data/icon.png
     - data/icon.svg
     - data/menu.svg
     - data/close.svg
