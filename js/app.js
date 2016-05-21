@@ -25,7 +25,53 @@
  *
  */
 
-var Scopa = {
+function get_generator(property, default_value)
+{
+    return function() {
+        return localStorage[property] || default_value;
+    }
+}
+
+function set_generator(property)
+{
+    return function(value) {
+        localStorage[property] = value;
+    }
+}
+
+function get_and_check_generator(property, allowed_values, default_value)
+{
+    if (Array.isArray(allowed_values))
+        return function() {
+            if (allowed_values.indexOf(localStorage[property]) > -1)
+                return localStorage[property];
+            else
+                return default_value;
+        }
+    else
+        return function() {
+            if (allowed_values.hasOwnProperty(localStorage[property]))
+                return localStorage[property];
+            else
+                return default_value;
+        }
+}
+
+function check_and_set_generator(property, allowed_values)
+{
+    if (Array.isArray(allowed_values))
+        return function(value) {
+            if (allowed_values.indexOf(value) > -1)
+                localStorage[property] = value;
+        }
+    else
+        return function(value) {
+            if (allowed_values.hasOwnProperty(value))
+                localStorage[property] = value;
+        }
+}
+
+var global_variables = {
     types_of_cards: {
         Bergamasche: {number: 40, w: 296, h: 545},
         Napoletane:  {number: 40, w: 331, h: 547},
@@ -41,7 +87,37 @@ var Scopa = {
     notifications_duration: 5,
 }
 
-Scopa.GraphicsManager = function(cardsType)
+var properties = {
+    cards: {
+        get: get_and_check_generator("cards", global_variables.types_of_cards, "Napoletane"),
+        set: check_and_set_generator("cards", global_variables.types_of_cards)
+    },
+    background: {
+        get: get_generator("background", "data/backgrounds/green.png"),
+        set: set_generator("background")
+    },
+    username: {
+        get: get_generator("username", "Player"),
+        set: set_generator("username")
+    },
+    variant: {
+        get: get_generator("variant", "Classic Scopa"),
+        set: set_generator("variant")
+    },
+    number_of_players: {
+        get: get_generator("number_of_players", "2"),
+        set: set_generator("number_of_players")
+    },
+}
+
+var settings = {};
+Object.defineProperties(settings, properties);
+for (key in global_variables)
+{
+    Object.defineProperty(settings, key, {value: global_variables[key], writable: false});
+}
+
+GraphicsManager = function(cardsType)
 {
     this.loadCardsLocked = false;
     this.loadedCards = 0;
@@ -49,14 +125,14 @@ Scopa.GraphicsManager = function(cardsType)
     
     this.canvasCache = {};
     
-    this.ch = Scopa.types_of_cards[cardsType].h;
-    this.cw = Scopa.types_of_cards[cardsType].w;
+    this.ch = settings.types_of_cards[cardsType].h;
+    this.cw = settings.types_of_cards[cardsType].w;
     
     if (cardsType) this.setCardsType(cardsType);
     else this.setCardsType("Napoletane")
 }
 
-Scopa.GraphicsManager.prototype.updateCardImg = function(img, card)
+GraphicsManager.prototype.updateCardImg = function(img, card)
 {
     img.dataset.card = `${card.value}${this.suits[card.suit]}`;
     if (card.new_value) img.dataset.new_value = card.new_value;
@@ -64,7 +140,7 @@ Scopa.GraphicsManager.prototype.updateCardImg = function(img, card)
     this.drawCardImg(img);
 }
 
-Scopa.GraphicsManager.prototype.drawCardImg = function(img)
+GraphicsManager.prototype.drawCardImg = function(img)
 {
     if (img.dataset.new_value) {
         var canvas = document.createElement("canvas");
@@ -98,7 +174,7 @@ Scopa.GraphicsManager.prototype.drawCardImg = function(img)
     }
 }
 
-Scopa.GraphicsManager.prototype.updateDeckImg = function(img, cards)
+GraphicsManager.prototype.updateDeckImg = function(img, cards)
 {
     img.dataset.length = cards.length;
     img.dataset.sideCardsLength = cards.side_cards.length;
@@ -114,7 +190,7 @@ Scopa.GraphicsManager.prototype.updateDeckImg = function(img, cards)
     this.drawDeckImg(img);
 }
 
-Scopa.GraphicsManager.prototype.drawDeckImg = function(img)
+GraphicsManager.prototype.drawDeckImg = function(img)
 {
     var numberOfCards = Math.ceil(parseInt(img.dataset.length)/4);
     
@@ -153,7 +229,7 @@ Scopa.GraphicsManager.prototype.drawDeckImg = function(img)
     img.src = canvas.toDataURL();
 }
 
-Scopa.GraphicsManager.prototype.updateCanvasCache = function(onLoad)
+GraphicsManager.prototype.updateCanvasCache = function(onLoad)
 {
     if (this.loadCardsLocked) return;
     
@@ -172,7 +248,7 @@ Scopa.GraphicsManager.prototype.updateCanvasCache = function(onLoad)
         canvas.height = manager.ch;
         
         var n = 1;
-        while (n*manager.cw < Scopa.types_of_cards[manager.cardsType].w)
+        while (n*manager.cw < settings.types_of_cards[manager.cardsType].w)
             n = n*2;
         
         tmp.width = manager.cw*n;
@@ -180,8 +256,8 @@ Scopa.GraphicsManager.prototype.updateCanvasCache = function(onLoad)
         tmpCtx = tmp.getContext("2d");
         
         tmpCtx.drawImage(image, 0, 0,
-                         Scopa.types_of_cards[manager.cardsType].w,
-                         Scopa.types_of_cards[manager.cardsType].h,
+                         settings.types_of_cards[manager.cardsType].w,
+                         settings.types_of_cards[manager.cardsType].h,
                          0, 0,
                          manager.cw*n,
                          manager.ch*n);
@@ -224,7 +300,7 @@ Scopa.GraphicsManager.prototype.updateCanvasCache = function(onLoad)
         manager.canvasCache[`${value}${manager.suits[suit]}`] = canvas;
         
         manager.loadedCards += 1;
-        if (manager.loadedCards == Scopa.types_of_cards[manager.cardsType].number+1)
+        if (manager.loadedCards == settings.types_of_cards[manager.cardsType].number+1)
         {
             if (manager.onLoad) manager.onLoad();
             manager.loadCardsLocked = false;
@@ -250,12 +326,12 @@ Scopa.GraphicsManager.prototype.updateCanvasCache = function(onLoad)
                 return function() {resize(this, suit, value)}
             })(suit, value);
             
-            img.src = `data/cards/${this.cardsType}/${value}${Scopa.suits[suit]}.jpg`;
+            img.src = `data/cards/${this.cardsType}/${value}${settings.suits[suit]}.jpg`;
         }
     }
 }
 
-Scopa.GraphicsManager.prototype.updateCards = function()
+GraphicsManager.prototype.updateCards = function()
 {
     var manager = this;
     
@@ -268,91 +344,39 @@ Scopa.GraphicsManager.prototype.updateCards = function()
     });
 }
 
-Scopa.GraphicsManager.prototype.setCardHeight = function(height)
+GraphicsManager.prototype.setCardHeight = function(height)
 {
     this.ch = Math.floor(height);
-    this.cw = Math.floor(Scopa.types_of_cards[this.cardsType].w*this.ch/Scopa.types_of_cards[this.cardsType].h);
+    this.cw = Math.floor(settings.types_of_cards[this.cardsType].w*this.ch/settings.types_of_cards[this.cardsType].h);
     
     this.updateCards();
 }
 
-Scopa.GraphicsManager.prototype.setCardWidth = function(width)
+GraphicsManager.prototype.setCardWidth = function(width)
 {
     this.cw = Math.floor(width);
-    this.ch = Math.floor(Scopa.types_of_cards[this.cardsType].h*this.cw/Scopa.types_of_cards[this.cardsType].w);
+    this.ch = Math.floor(settings.types_of_cards[this.cardsType].h*this.cw/settings.types_of_cards[this.cardsType].w);
     
     this.updateCards();
 }
 
-Scopa.GraphicsManager.prototype.setCardsType = function(cardsType)
+GraphicsManager.prototype.setCardsType = function(cardsType)
 {
     this.cardsType = cardsType;
     
     this.setCardHeight(this.ch); //FIXME
     
-    if (Scopa.types_of_cards[cardsType].number == 40) this.suits = "dcbs";
+    if (settings.types_of_cards[cardsType].number == 40) this.suits = "dcbs";
     
     this.updateCards();
 }
 
-Scopa.Settings = function() {}
-
-Object.defineProperty(Scopa.Settings.prototype, "cards", {
-    get: function() {
-        if (Scopa.types_of_cards.hasOwnProperty(localStorage.cards) > -1)
-            return localStorage.cards;
-        else
-            return "Napoletane";
-    },
-    set: function(value) {
-        if (Scopa.types_of_cards.hasOwnProperty(value) > -1)
-            localStorage.cards = value;
-    }
-});
-
-Object.defineProperty(Scopa.Settings.prototype, "background", {
-    get: function() {
-        return localStorage.background || "data/backgrounds/green.png";
-    },
-    set: function(value) {
-        localStorage.background = value;
-    }
-});
-
-Object.defineProperty(Scopa.Settings.prototype, "userName", {
-    get: function() {
-        return localStorage.userName || "Player";
-    },
-    set: function(value) {
-        localStorage.userName = value;
-    }
-});
-
-Object.defineProperty(Scopa.Settings.prototype, "variant", {
-    get: function() {
-        return localStorage.variant || "Classic Scopa";
-    },
-    set: function(value) {
-        localStorage.variant = value;
-    }
-});
-
-Object.defineProperty(Scopa.Settings.prototype, "numberOfPlayers", {
-    get: function() {
-        return localStorage.numberOfPlayers || 2;
-    },
-    set: function(value) {
-        localStorage.numberOfPlayers = value;
-    }
-});
-
-Scopa.Application = function()
+ScopaApplication = function()
 {
     this.variants = [];
     this.match = null;
-    this.settings = new Scopa.Settings();
     
-    this.graphicsManager = new Scopa.GraphicsManager(this.settings.cards);
+    this.graphicsManager = new GraphicsManager(settings.cards);
     
     this.resizeLock = false;
     this.resizeRequested = true;
@@ -361,18 +385,18 @@ Scopa.Application = function()
     this.playedCard = null;
     
     //load settings
-    document.body.style.backgroundImage = `url(${this.settings.background})`;
-    document.getElementById("userName").value = this.settings.userName;
+    document.body.style.backgroundImage = `url(${settings.background})`;
+    document.getElementById("userName").value = settings.username;
     
     var cardTypeSelect = document.querySelector("#cardType");
-    for (var cardType in Scopa.types_of_cards)
+    for (var cardType in settings.types_of_cards)
     {
         var option = document.createElement("option");
         option.id = cardType;
         option.appendChild(document.createTextNode(cardType));
         cardTypeSelect.appendChild(option);
     }
-    document.getElementById(this.settings.cards).selected = true;
+    document.getElementById(settings.cards).selected = true;
     
     //add event listeners
     var app = this;
@@ -382,7 +406,7 @@ Scopa.Application = function()
     for (var i=0; i<backgroundPreviews.length; i++) {
         backgroundPreviews[i].addEventListener("click", function(evt) {
             document.body.style.backgroundImage = `url(${evt.target.src})`;
-            app.settings.background = evt.target.src;
+            settings.background = evt.target.src;
         });
     }
     
@@ -391,8 +415,8 @@ Scopa.Application = function()
     });
     
     document.querySelector("#cardType").addEventListener("change", function(){
-        app.settings.cards = document.querySelector("#cardType").selectedOptions[0].id;
-        app.graphicsManager.setCardsType(app.settings.cards)
+        settings.cards = document.querySelector("#cardType").selectedOptions[0].id;
+        app.graphicsManager.setCardsType(settings.cards)
         app.onResize();
     });
     
@@ -481,7 +505,7 @@ Scopa.Application = function()
     this.onResize();
 }
 
-Scopa.Application.prototype.registerGame = function(Game)
+ScopaApplication.prototype.registerGame = function(Game)
 {
     var game = new Game();
     
@@ -500,28 +524,28 @@ Scopa.Application.prototype.registerGame = function(Game)
     option.appendChild(document.createTextNode(info.name));
     variantSelect.appendChild(option);
     
-    if (this.settings.variant == info.name) option.selected = true;
+    if (settings.variant == info.name) option.selected = true;
 }
 
-Scopa.Application.prototype.updateNumberOfPlayers = function() {
+ScopaApplication.prototype.updateNumberOfPlayers = function() {
     var variant = this.variants[document.querySelector("#variant").selectedOptions[0].dataset.index];
-    var numberOfPlayers = document.querySelector("#numberOfPlayers");
-    while (numberOfPlayers.firstChild) {
-        numberOfPlayers.removeChild(numberOfPlayers.firstChild);
+    var number_of_players = document.querySelector("#numberOfPlayers");
+    while (number_of_players.firstChild) {
+        number_of_players.removeChild(number_of_players.firstChild);
     }
     for (var i=0; i<variant.number_of_players.length; i++) {
         var option = document.createElement("option");
         option.innerHTML = variant.number_of_players[i];
         option.id = "numberOfPlayers-"+variant.number_of_players[i];
-        numberOfPlayers.appendChild(option);
+        number_of_players.appendChild(option);
     }
-    if (document.querySelector("#numberOfPlayers-"+this.settings.numberOfPlayers)) {
-        document.querySelector("#numberOfPlayers-"+this.settings.numberOfPlayers).selected = true;
+    if (document.querySelector("#numberOfPlayers-"+settings.number_of_players)) {
+        document.querySelector("#numberOfPlayers-"+settings.number_of_players).selected = true;
     }
 }
 
 
-Scopa.Application.prototype.showDialog = function(dialogId)
+ScopaApplication.prototype.showDialog = function(dialogId)
 {
     var dialogs = document.querySelectorAll(".dialog");
     for (var i=0; i<dialogs.length; i++) 
@@ -538,7 +562,7 @@ Scopa.Application.prototype.showDialog = function(dialogId)
     }
 }
 
-Scopa.Application.prototype.displayMessage = function(data) {
+ScopaApplication.prototype.displayMessage = function(data) {
     var messages = document.getElementById("messages");
     
     var message = document.createElement("label");
@@ -552,7 +576,7 @@ Scopa.Application.prototype.displayMessage = function(data) {
     messagesLog.appendChild(br.cloneNode(false));
     
     //display notification
-    message.style.animation = `message ${Scopa.notifications_duration}s forwards`;
+    message.style.animation = `message ${settings.notifications_duration}s forwards`;
     
     message.addEventListener("animationend", function() {
         messages.removeChild(message);
@@ -563,7 +587,7 @@ Scopa.Application.prototype.displayMessage = function(data) {
     messages.insertBefore(message, messages.firstChild);
 }
 
-Scopa.Application.prototype.onResize = function(e)
+ScopaApplication.prototype.onResize = function(e)
 {
     if (!this.resizeLock && this.resizeRequested)
     {
@@ -574,7 +598,7 @@ Scopa.Application.prototype.onResize = function(e)
         var w = document.documentElement.clientWidth;
         var h = document.documentElement.clientHeight;
         
-        var ch = Math.min(h/4.5, Scopa.types_of_cards[this.settings.cards].h)
+        var ch = Math.min(h/4.5, settings.types_of_cards[settings.cards].h)
         this.graphicsManager.setCardHeight(ch);
         
         css = `:root {
@@ -588,7 +612,7 @@ Scopa.Application.prototype.onResize = function(e)
             
         document.querySelector("#root").innerHTML = css;
         
-        //this.loadCards(this.settings.cards);
+        //this.loadCards(settings.cards);
         
         var fixedCards = document.querySelectorAll(".fixedCard, .fixedDeck");
         
@@ -608,7 +632,7 @@ Scopa.Application.prototype.onResize = function(e)
         this.resizeRequested = true;
 }
 
-Scopa.Application.prototype.onStartGame = function()
+ScopaApplication.prototype.onStartGame = function()
 {
     var fixedCards = document.querySelectorAll(".fixedCard, .fixedDeck");
     
@@ -627,25 +651,25 @@ Scopa.Application.prototype.onStartGame = function()
     //clean animations
     document.getElementById("animations").innerHTML = "";
     
-    var numberOfPlayers = document.querySelector("#numberOfPlayers").selectedOptions[0].id.replace("numberOfPlayers-","");
+    var number_of_players = document.querySelector("#numberOfPlayers").selectedOptions[0].id.replace("numberOfPlayers-","");
     var variant = this.variants[document.querySelector("#variant").selectedOptions[0].dataset.index];
-    var userName = document.getElementById("userName").value;
+    var username = document.getElementById("userName").value;
     
     this.match = new variant.class();
     
     var message;
     
-    if (numberOfPlayers == 2)
+    if (number_of_players == 2)
     {
         message = {"command": "start", "data": [
-            {"type": "human", "name": userName},
+            {"type": "human", "name": username},
             {"type": "cpu", "name": "cpu1"},
         ]};
     }
     else
     {
         message = {"command": "start", "data": [
-            {"type": "human", "name": userName},
+            {"type": "human", "name": username},
             {"type": "cpu", "name": "cpu2"},
             {"type": "cpu", "name": "cpu1"},
             {"type": "cpu", "name": "cpu3"},
@@ -654,16 +678,16 @@ Scopa.Application.prototype.onStartGame = function()
     
     var response = this.match.send(message);
     
-    this.settings.numberOfPlayers = numberOfPlayers;
-    this.settings.variant = variant.name;
-    this.settings.userName = userName;
+    settings.number_of_players = number_of_players;
+    settings.variant = variant.name;
+    settings.username = username;
     
     document.querySelector("#new-game").hidden = true;
     
     this.analyze(response);
 }
 
-Scopa.Application.prototype.getOffset = function(selector)
+ScopaApplication.prototype.getOffset = function(selector)
 {
     var el = document.querySelector(selector);
     
@@ -679,7 +703,7 @@ Scopa.Application.prototype.getOffset = function(selector)
     return offset;
 }
 
-Scopa.Application.prototype.initTable = function(cards)
+ScopaApplication.prototype.initTable = function(cards)
 {
     for (var i=0; i<cards.length; i++)
     {
@@ -689,7 +713,7 @@ Scopa.Application.prototype.initTable = function(cards)
             if (cards[i].owners.length === 0)
                 div = document.querySelector("#mainDeck");
             
-            else if (cards[i].owners.indexOf(this.settings.userName) > -1)
+            else if (cards[i].owners.indexOf(settings.username) > -1)
                 div = document.querySelector("#team0Deck");
             
             else
@@ -699,7 +723,7 @@ Scopa.Application.prototype.initTable = function(cards)
         if (cards[i].type === "hand")
         {
             var orientation = "v";
-            if (cards[i].owners[0] === this.settings.userName)
+            if (cards[i].owners[0] === settings.username)
             {
                 div = document.querySelector("#humanCards");
                 orientation = "h";
@@ -733,7 +757,7 @@ Scopa.Application.prototype.initTable = function(cards)
     }
 }
 
-Scopa.Application.prototype.updateCards = function(cards, id)
+ScopaApplication.prototype.updateCards = function(cards, id)
 {
     for (var i=0; i<cards.length; i++)
     {
@@ -760,7 +784,7 @@ Scopa.Application.prototype.updateCards = function(cards, id)
     }
 }
 
-Scopa.Application.prototype.analyze = function(response)
+ScopaApplication.prototype.analyze = function(response)
 {
     //console.log(response);
     if (response.moves.length === 0 && response.cards.length === 0 && response.infos.length === 0)
@@ -813,7 +837,7 @@ Scopa.Application.prototype.analyze = function(response)
                         document.querySelector("#move-choice").hidden = true;
                         
                         var newResponse = app.match.send({"command": "human_play", "data": {
-                            player: app.settings.userName,
+                            player: settings.username,
                             card: app.playedCard,
                             take: index
                         }});
@@ -911,7 +935,7 @@ Scopa.Application.prototype.analyze = function(response)
                             
                             app.playedCard = card;
                             var newResponse = app.match.send({"command": "human_play", "data": {
-                                player: app.settings.userName,
+                                player: settings.username,
                                 card: card
                             }});
                             
@@ -991,7 +1015,7 @@ if (navigator.language)
     css.href = `locales/${navigator.language}.css`;
 }
 
-app = new Scopa.Application();
+app = new ScopaApplication();
 app.registerGame(ClassicMatch);
 app.registerGame(ScoponeMatch);
 app.registerGame(ReBelloMatch);
