@@ -108,6 +108,14 @@ var properties = {
         get: get_generator("number_of_players", "2"),
         set: set_generator("number_of_players")
     },
+    show_value_on_cards: {
+        get: get_and_check_generator("show_value_on_cards", ["0", "1"], "0"),
+        set: check_and_set_generator("show_value_on_cards", ["0", "1"])
+    },
+    speed: {
+        get: get_and_check_generator("speed", ["slow", "medium", "fast"], "medium"),
+        set: check_and_set_generator("speed", ["slow", "medium", "fast"])
+    },
 }
 
 var settings = {};
@@ -397,6 +405,7 @@ ScopaApplication = function()
         cardTypeSelect.appendChild(option);
     }
     document.getElementById(settings.cards).selected = true;
+    document.getElementById(settings.speed).selected = true;
     
     //add event listeners
     var app = this;

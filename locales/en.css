@@ -66,6 +66,26 @@
     content: 'Cards type:';
 }
 
+[data-string-id='speed']::before {
+    content: 'Speed:';
+}
+
+[data-string-id='slow']::before {
+    content: 'Slow';
+}
+
+[data-string-id='medium']::before {
+    content: 'Medium';
+}
+
+[data-string-id='fast']::before {
+    content: 'Fast';
+}
+
+[data-string-id='show_value_on_cards']::before {
+    content: 'Show value on cards:';
+}
+
 [data-string-id='background']::before {
     content: 'Background:';
 }
