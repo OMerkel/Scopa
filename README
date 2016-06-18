@@ -45,10 +45,9 @@ You can specify the directory where Qt 5 include files are on your system
 
 You can use the following command to run the application:
 
-  ./scopa
+  ./build/bin/scopa
 
-To install the application indise DIR directory run (specify the QTINCPATH and 
-LIBSPATH variables if needed):
+To install the application inside the DIR directory run:
 
   INSTALLPATH=DIR make install
 
@@ -86,7 +85,6 @@ LICENSING
     - locales/en.css
     - locales/it.css
     - qt-application/main.cpp
-    - qt-application/main.h
     - tests/tests.js
     
    are part of the Scopa software, Copyright (C) 2016 Marco Scarpetta <marcoscarpetta02@gmail.com>

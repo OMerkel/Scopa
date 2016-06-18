@@ -22,20 +22,19 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
 #include <QtWebEngineWidgets/QWebEngineView>
-#include "main.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     QMainWindow mainWindow;
     QWebEngineView view;
-    QIcon icon(RELPATH"/data/icon.png");
+    QIcon icon("../share/scopa/data/icon.png");
     
     mainWindow.setCentralWidget(&view);
     mainWindow.setWindowIcon(icon); //mainWindow.setWindowIcon(view.page()->icon());
     mainWindow.setWindowTitle("Scopa");
     
-    view.load(QUrl::fromLocalFile(a.applicationDirPath()+RELPATH"/index.html"));
+    view.load(QUrl::fromLocalFile(a.applicationDirPath()+"/../share/scopa/index.html"));
     mainWindow.show();
 
     return a.exec();

@@ -19,8 +19,9 @@
 
 QTINCPATH     ?= /usr/include/qt
 LIBSPATH      ?= /usr/lib
-INSTALLPATH   ?= .
+INSTALLPATH   ?= dist
 
+# c++ compilation stuff
 DEFINES       = -DQT_NO_DEBUG -DQT_WEBENGINEWIDGETS_LIB -DQT_WEBENGINECORE_LIB \
                 -DQT_QUICK_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_WEBCHANNEL_LIB \
                 -DQT_QML_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB
@@ -34,46 +35,60 @@ LIBS          = -L$(LIBSPATH) -lGL -lpthread -lQt5Core -lQt5WebEngineWidgets \
 
 LFLAGS        = -Wl,-O1 -Wl,-rpath,$(LIBSPATH) \
                 -Wl,-rpath-link,$(LIBSPATH)
-                 
-scopa: update-main-h scopa.o
-	g++ $(LFLAGS) -o scopa scopa.o $(LIBS)
 
-scopa.o: qt-application/main.cpp qt-application/main.h
+# static files
+TEN           = 1 2 3 4 5 6 7 8 9 10
+
+CARDS_FILES   = $(addsuffix .jpg, $(addsuffix d, $(TEN)) $(addsuffix c, $(TEN)) \
+                                  $(addsuffix b, $(TEN)) $(addsuffix s, $(TEN)) bg)
+
+ALL_CARDS     = $(addprefix Napoletane/, $(CARDS_FILES)) \
+                $(addprefix Piacentine/, $(CARDS_FILES)) \
+                $(addprefix Bergamasche/, $(CARDS_FILES))
+
+DATA_DIR      = $(addprefix data/cards/, $(ALL_CARDS)) \
+                $(addprefix data/, close.svg menu.svg icon.svg icon.png) \
+                $(addprefix data/backgrounds/, red.png green.png blue.png)
+
+ALL_FILES     = $(DATA_DIR) index.html style.css \
+                $(addprefix docs/, index.html style.css game-class.html) \
+                $(addprefix js/, app.js utils.js classic.js scopone.js cucita.js \
+                                 cirulla.js rebello.js) \
+                $(addprefix locales/, it.css en.css)
+
+STATIC_FILES  = $(addprefix build/share/scopa/, $(ALL_FILES))
+
+.PHONY:
+all: build/bin/scopa $(STATIC_FILES)
+
+build/bin/scopa: scopa.o
+	mkdir -p build/bin
+	g++ $(LFLAGS) -o build/bin/scopa scopa.o $(LIBS)
+
+scopa.o: qt-application/main.cpp
 	g++ -c $(CXXFLAGS) $(INCPATH) -o scopa.o qt-application/main.cpp
 
-.PHONY: update-main-h
-update-main-h:
-ifeq "$(INSTALLPATH)" "."
-	sed -i '$$ d' qt-application/main.h
-	echo '#define RELPATH "/./"' >> qt-application/main.h
-else
-	sed -i '$$ d' qt-application/main.h
-	echo '#define RELPATH "/../share/scopa/"' >> qt-application/main.h
-endif
+.SECONDEXPANSION:
+
+$(STATIC_FILES): $$(subst build/share/scopa/,,$$@)
+	mkdir -p $(dir $@)
+	cp -r $(subst build/share/scopa/,,$@) $@
 
 .PHONY: install
-install: scopa
-ifneq "$(INSTALLPATH)" "."
-	mkdir -p $(INSTALLPATH)/bin
-	mkdir -p $(INSTALLPATH)/share/scopa
-	install -c scopa $(INSTALLPATH)/bin/scopa
-	cp index.html $(INSTALLPATH)/share/scopa/
-	cp style.css $(INSTALLPATH)/share/scopa/
-	cp -r data $(INSTALLPATH)/share/scopa/
-	cp -r docs $(INSTALLPATH)/share/scopa/
-	cp -r js $(INSTALLPATH)/share/scopa/
-	cp -r locales $(INSTALLPATH)/share/scopa/
-endif
+install: all
+	mkdir -p $(INSTALLPATH)
+	cp -r build/* $(INSTALLPATH)/
 
 .PHONY: tests
 tests: tests.html
 tests.html: index.html
 	fromBottom=2; \
-	fromTop=$$(($$(sed -n '$$=' index.html)-$$fromBottom)); \
-	head -n $$fromTop index.html > tests.html; \
+	fromTop=$$$$(($$$$(sed -n '$$$$=' index.html)-$$$$fromBottom)); \
+	head -n $$$$fromTop index.html > tests.html; \
 	echo "<script type=\"text/javascript\" src=\"tests/tests.js\"></script>" >> tests.html; \
-	tail -n $$fromBottom index.html >> tests.html
+	tail -n $$$$fromBottom index.html >> tests.html
 
 .PHONY: clean
 clean:
-	rm -f scopa scopa.o tests.html
+	rm -f scopa.o tests.html
+	rm -f -r build
