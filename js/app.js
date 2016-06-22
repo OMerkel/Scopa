@@ -95,6 +95,11 @@ var global_variables = {
     },
     suits: "dcbs",
     notifications_duration: 5,
+    animation_duration: {
+        slow: 1.5,
+        medium: 1,
+        fast: 0.7
+    }
 }
 
 var properties = {
@@ -120,7 +125,7 @@ var properties = {
     },
     show_value_on_cards: {
         get: get_and_check_generator("show_value_on_cards", ["0", "1"], "0"),
-        set: check_and_set_generator("show_value_on_cards", ["0", "1"])
+        set: check_and_set_generator("show_value_on_cards", [0, 1])
     },
     speed: {
         get: get_and_check_generator("speed", ["slow", "medium", "fast"], "medium"),
@@ -170,21 +175,18 @@ GraphicsManager.prototype.drawCardImg = function(img)
         ctx.drawImage(this.canvasCache[img.dataset.card],
                       0, 0, this.cw, this.ch,
                       0, 0, this.cw, this.ch);
+
+        var m = Math.floor(this.cw/10);
+        var s = Math.floor(this.ch/8);
         
-        if (img.dataset.new_value)
-        {
-            var m = Math.floor(this.cw/10);
-            var s = Math.floor(this.ch/8);
-            
-            ctx.font = `${s}px serif`;
-            var text = ctx.measureText(img.dataset.new_value);
-            ctx.fillStyle = "red";
-            ctx.fillRect(canvas.width-text.width-2*m, 0, text.width+2*m, s+2*m);
-            ctx.fillStyle = "black";
-            ctx.fillText(img.dataset.new_value, canvas.width-text.width-m, s+m);
-            
-            img.src = canvas.toDataURL();
-        }
+        ctx.font = `${s}px serif`;
+        var text = ctx.measureText(img.dataset.new_value);
+        ctx.fillStyle = "red";
+        ctx.fillRect(canvas.width-text.width-2*m, 0, text.width+2*m, s+2*m);
+        ctx.fillStyle = "black";
+        ctx.fillText(img.dataset.new_value, canvas.width-text.width-m, s+m);
+        
+        img.src = canvas.toDataURL();
     }
     else 
     {
@@ -315,6 +317,20 @@ GraphicsManager.prototype.updateCanvasCache = function(onLoad)
                       manager.cw,
                       manager.ch);
         
+        //value on cards
+        if (settings.show_value_on_cards == true && value != 0)
+        {
+            var m = Math.floor(manager.cw/10);
+            var s = Math.floor(manager.ch/8);
+            
+            ctx.font = `${s}px serif`;
+            var text = ctx.measureText(value);
+            ctx.fillStyle = "black";
+            ctx.fillRect(canvas.width-text.width-2*m, 0, text.width+2*m, s+2*m);
+            ctx.fillStyle = "white";
+            ctx.fillText(value, canvas.width-text.width-m, s+m);
+        }
+        
         manager.canvasCache[`${value}${manager.suits[suit]}`] = canvas;
         
         manager.loadedCards += 1;
@@ -416,6 +432,7 @@ ScopaApplication = function()
     }
     document.getElementById(settings.cards).selected = true;
     document.getElementById(settings.speed).selected = true;
+    document.getElementById("show_value_on_cards").selected = true;
     
     //add event listeners
     var app = this;
@@ -437,6 +454,15 @@ ScopaApplication = function()
         settings.cards = document.querySelector("#cardType").selectedOptions[0].id;
         app.graphicsManager.setCardsType(settings.cards)
         app.onResize();
+    });
+    
+    document.querySelector("#speed").addEventListener("change", function(){
+        settings.speed = document.querySelector("#speed").selectedOptions[0].id;
+    });
+    
+    document.querySelector("#show_value_on_cards").addEventListener("change", function(){
+        settings.show_value_on_cards = Number(document.querySelector("#show_value_on_cards").checked);
+        app.graphicsManager.updateCards();
     });
     
     var menu = document.querySelector("#menu");
@@ -937,6 +963,7 @@ ScopaApplication.prototype.analyze = function(response)
     this.updateCards(response.cards, document.querySelector("#mainDeck").dataset.id);
     var animations = document.querySelector("#animations");
     animations.innerHTML = "";
+    var wait = 1;
     
     for (var i=0; i<response.moves.length; i++)
     {
@@ -1010,9 +1037,10 @@ ScopaApplication.prototype.analyze = function(response)
             var offset = this.getOffset(`#${placeHolder.id}`);
             if (response.moves[i].move_on)
             {
+                wait = 1.5;
                 offset = this.getOffset(`#absCard${response.moves[i].move_on.id}`);
-                offset.top += 30;
-                offset.left += 30;
+                offset.top += Math.floor(0.3*this.graphicsManager.cw);
+                offset.left += Math.floor(0.3*this.graphicsManager.cw);
             }
             
             var animation = `
@@ -1028,17 +1056,18 @@ ScopaApplication.prototype.analyze = function(response)
             }`;
             
             animations.innerHTML += animation;
-            cardImg.style.animation = `card${card.id} 1s`;
+            cardImg.style.animation = `card${card.id} ${settings.animation_duration[settings.speed]}s`;
             cardImg.style.top = `${offset.top}px`;
             cardImg.style.left = `${offset.left}px`;
         }
     }
     
-    setTimeout(function(app){app.updateCards(response.cards)}, 1000, this);
+    setTimeout(function(app){app.updateCards(response.cards)},
+               settings.animation_duration[settings.speed]*wait*1000, this);
     setTimeout(function(app){
         var newResponse = app.match.send({"command": "next"});
         app.analyze(newResponse);
-    }, 1000, this);
+    }, settings.animation_duration[settings.speed]*wait*1000, this);
 }
 
 app = new ScopaApplication();
