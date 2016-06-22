@@ -34,7 +34,9 @@ var locale =
 "first_player": "Comincia {0}!",
 "cards_value_lt_10": "La somma delle carte di {0} è minore di 10",
 "2_equal_cards": "{0} ha 2 carte uguali",
-"3_equal_cards": "{0} ha 3 carte uguali"
+"3_equal_cards": "{0} ha 3 carte uguali",
+"winner": "La squadra {0} ha vinto!"
 }
+
 
 app.loadLocale(locale);

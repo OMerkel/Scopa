@@ -103,6 +103,11 @@ install: all
 	mkdir -p $(INSTALLPATH)
 	cp -r build/* $(INSTALLPATH)/
 
+.PHONY: install-html-only
+install-html-only: $(STATIC_FILES)
+	mkdir -p $(INSTALLPATH)
+	cp -r build/share/scopa/* $(INSTALLPATH)/
+
 .PHONY: tests
 tests: tests.html
 tests.html: index.html
