@@ -82,8 +82,10 @@ LICENSING
     - js/rebello.js
     - js/scopone.js
     - js/utils.js
-    - locales/en.css
-    - locales/it.css
+    - locales/en.js
+    - locales/it.js
+    - locales_json/en.json
+    - locales_json/it.json
     - qt-application/main.cpp
     - tests/tests.js
     

@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     QMainWindow mainWindow;
     QWebEngineView view;
-    QIcon icon("../share/scopa/data/icon.png");
+    QIcon icon(a.applicationDirPath()+"/../share/scopa/data/icon.png");
     
     mainWindow.setCentralWidget(&view);
     mainWindow.setWindowIcon(icon); //mainWindow.setWindowIcon(view.page()->icon());

@@ -50,11 +50,15 @@ DATA_DIR      = $(addprefix data/cards/, $(ALL_CARDS)) \
                 $(addprefix data/, close.svg menu.svg icon.svg icon.png) \
                 $(addprefix data/backgrounds/, red.png green.png blue.png)
 
+LOCALES       = it en
+LOCALES_FILES = $(addprefix locales/, $(addsuffix .js, $(LOCALES)))
+LOCALES_JSON  = $(addprefix locales_json/, $(addsuffix .json, $(LOCALES)))
+
 ALL_FILES     = $(DATA_DIR) index.html style.css \
                 $(addprefix docs/, index.html style.css game-class.html) \
                 $(addprefix js/, app.js utils.js classic.js scopone.js cucita.js \
                                  cirulla.js rebello.js) \
-                $(addprefix locales/, it.css en.css)
+                $(LOCALES_FILES)
 
 STATIC_FILES  = $(addprefix build/share/scopa/, $(ALL_FILES))
 
@@ -69,10 +73,30 @@ scopa.o: qt-application/main.cpp
 	g++ -c $(CXXFLAGS) $(INCPATH) -o scopa.o qt-application/main.cpp
 
 .SECONDEXPANSION:
-
 $(STATIC_FILES): $$(subst build/share/scopa/,,$$@)
 	mkdir -p $(dir $@)
 	cp -r $(subst build/share/scopa/,,$@) $@
+
+.PHONY: locales
+locales: $(LOCALES_FILES)
+$(LOCALES_FILES): $$(subst .js,.json,$$(subst locales,locales_json,$$@))
+	echo "var locale =" > $@
+	cat $(subst .js,.json,$(subst locales,locales_json,$@)) >> $@
+	echo "app.loadLocale(locale);" >> $@
+
+.PHONY: fetch-locales
+fetch-locales: clean-locales-json $(LOCALES_JSON)
+$(LOCALES_JSON):
+	mkdir -p locales_json
+	lang=$(basename $(notdir $@)); \
+	user=$$(echo $$(head -n 1 transifex) | tr '\n' ' '); \
+	curl --user $$user -L -X GET \
+	https://www.transifex.com/api/2/project/scopa/resource/enjson/translation/$$lang \
+	| python3 -c 'import sys, json; print(json.load(sys.stdin, encoding="utf-8")["content"])' > locales_json/$$lang.json;
+
+.PHONY: clean-locales-json
+clean-locales-json:
+	rm locales_json/*
 
 .PHONY: install
 install: all
@@ -83,10 +107,10 @@ install: all
 tests: tests.html
 tests.html: index.html
 	fromBottom=2; \
-	fromTop=$$$$(($$$$(sed -n '$$$$=' index.html)-$$$$fromBottom)); \
-	head -n $$$$fromTop index.html > tests.html; \
+	fromTop=$$(($$(sed -n '$$=' index.html)-$$fromBottom)); \
+	head -n $$fromTop index.html > tests.html; \
 	echo "<script type=\"text/javascript\" src=\"tests/tests.js\"></script>" >> tests.html; \
-	tail -n $$$$fromBottom index.html >> tests.html
+	tail -n $$fromBottom index.html >> tests.html
 
 .PHONY: clean
 clean:

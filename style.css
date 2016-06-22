@@ -185,6 +185,7 @@ div, table, td, tr, body {
 
 .titlebar > *:first-child {
     flex-grow: 100;
+    padding: 0px 20px;
 }
 
 .titlebar > *:last-child {

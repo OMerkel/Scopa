@@ -133,6 +133,7 @@ ReBelloMatchTest.prototype = new ReBelloMatch();
 function TestGame() 
 {
     this.name = "Test Game";
+    this.number_of_players = [2];
 }
 
 TestGame.prototype.response = function() {
@@ -222,9 +223,31 @@ CardsChoiceTest.prototype.response = function() {
     }
 }
 
+//Match end test
+function MatchEndTest() 
+{
+    this.name = "Match end";
+}
+
+MatchEndTest.prototype = new TestGame();
+
+MatchEndTest.prototype.response = function() {
+    return {
+        infos: [
+            {
+                info: "winner",
+                data: Math.floor(Math.random()*10)
+            }
+        ],
+        cards: [],
+        moves: []
+    }
+}
+
 
 app.registerGame(SummaryTest);
 app.registerGame(CardsChoiceTest);
+app.registerGame(MatchEndTest);
 app.registerGame(ClassicMatchTest);
 app.registerGame(ScoponeMatchTest);
 app.registerGame(CirullaMatchTest);

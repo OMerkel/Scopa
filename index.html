@@ -24,8 +24,6 @@
         <meta charset="utf-8">
         <link rel="shortcut icon" type="image/svg" href="data/icon.svg"/>
         <link rel="stylesheet" href="style.css">
-        <link rel="stylesheet" href="locales/en.css">
-        <link rel="stylesheet" href="locales/en.css" id="locale">
     </head>
     
     <body>
@@ -84,7 +82,7 @@
             </tr>
         </table>
         
-        <div class="menu" hidden="true" id="menu">
+        <div class="menu" id="menu" hidden>
             <label id="new-game-item" data-string-id="new-game" data-dialog="new-game"></label>
             <label id="settings-item" data-string-id="settings" data-dialog="settings"></label>
             <label id="cronology-item" data-string-id="cronology" data-dialog="cronology"></label>
@@ -92,7 +90,7 @@
             <label id="about-item" data-string-id="about" data-dialog="about"></label>
         </div>
         
-        <div class="dialog" id="new-game">
+        <div class="dialog" id="new-game" hidden>
             <div class="window">
                 <div class="titlebar">
                     <label data-string-id="new-game"></label>
@@ -114,7 +112,7 @@
             </div>
         </div>
         
-        <div class="dialog" id="settings">
+        <div class="dialog" id="settings" hidden>
             <div class="window">
                 <div class="titlebar">
                     <label data-string-id="settings"></label>
@@ -144,7 +142,7 @@
             </div>
         </div>
         
-        <div class="dialog" id="cronology">
+        <div class="dialog" id="cronology" hidden>
             <div class="window">
                 <div class="titlebar">
                     <label data-string-id="cronology"></label>
@@ -159,7 +157,7 @@
             </div>
         </div>
         
-        <div class="dialog" id="help">
+        <div class="dialog" id="help" hidden>
             <div class="window">
                 <div class="titlebar">
                     <label data-string-id="help"></label>
@@ -177,7 +175,7 @@
             </div>
         </div>
         
-        <div class="dialog" id="about">
+        <div class="dialog" id="about" hidden>
             <div class="window">
                 <div class="titlebar">
                     <label data-string-id="about"></label>

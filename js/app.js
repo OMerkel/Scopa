@@ -25,6 +25,16 @@
  *
  */
 
+String.prototype.format = function()
+{
+    var tmp = this.toString();
+    for (var i=0; i<arguments.length; i++)
+    {
+        tmp = tmp.split(`{${i}}`).join(arguments[i]);
+    }
+    return tmp;
+}
+
 function get_generator(property, default_value)
 {
     return function() {
@@ -536,6 +546,17 @@ ScopaApplication.prototype.registerGame = function(Game)
     if (settings.variant == info.name) option.selected = true;
 }
 
+ScopaApplication.prototype.loadLocale = function(locale)
+{
+    this.locale = locale;
+    
+    var labels = document.querySelectorAll("[data-string-id]");
+    for (var i=0; i<labels.length; i++)
+    {
+        labels[i].textContent = this.locale[labels[i].dataset.stringId];
+    }
+}
+
 ScopaApplication.prototype.updateNumberOfPlayers = function() {
     var variant = this.variants[document.querySelector("#variant").selectedOptions[0].dataset.index];
     var number_of_players = document.querySelector("#numberOfPlayers");
@@ -544,7 +565,7 @@ ScopaApplication.prototype.updateNumberOfPlayers = function() {
     }
     for (var i=0; i<variant.number_of_players.length; i++) {
         var option = document.createElement("option");
-        option.innerHTML = variant.number_of_players[i];
+        option.textContent = variant.number_of_players[i];
         option.id = "numberOfPlayers-"+variant.number_of_players[i];
         number_of_players.appendChild(option);
     }
@@ -571,13 +592,13 @@ ScopaApplication.prototype.showDialog = function(dialogId)
     }
 }
 
-ScopaApplication.prototype.displayMessage = function(data) {
+ScopaApplication.prototype.displayMessage = function(stringId, string) {
     var messages = document.getElementById("messages");
     
     var message = document.createElement("label");
+    message.dataset.stringId = stringId;
+    message.textContent = string;
     var br = document.createElement("br");
-    
-    for (var key in data) message.dataset[key] = data[key];
     
     //update messages log
     var messagesLog = document.getElementById("messages-log");
@@ -812,10 +833,10 @@ ScopaApplication.prototype.analyze = function(response)
             response.infos[i].info === "2_equal_cards" ||
             response.infos[i].info === "3_equal_cards")
         {
-            this.displayMessage({
-                stringId: response.infos[i].info,
-                player: response.infos[i].data,
-            });
+            var string = "";
+            if (this.locale[response.infos[i].info])
+                string = this.locale[response.infos[i].info].format(response.infos[i].data);
+            this.displayMessage(response.infos[i].info, string);
         }
         
         if (response.infos[i].info === "waiting")
@@ -904,7 +925,10 @@ ScopaApplication.prototype.analyze = function(response)
         
         if (response.infos[i].info === "winner")
         {
-            document.querySelector("#winner").innerHTML = `Team ${response.infos[i].data} wins!`;
+            var string = "";
+            if (this.locale["winner"])
+                string = this.locale["winner"].format(response.infos[i].data);
+            document.querySelector("#winner").textContent = string;
             document.querySelector("#match-end").hidden = false;
             return;
         }
@@ -1017,13 +1041,6 @@ ScopaApplication.prototype.analyze = function(response)
     }, 1000, this);
 }
 
-//language settings
-if (navigator.language)
-{
-    var css = document.getElementById("locale");
-    css.href = `locales/${navigator.language}.css`;
-}
-
 app = new ScopaApplication();
 app.registerGame(ClassicMatch);
 app.registerGame(ScoponeMatch);
@@ -1031,4 +1048,21 @@ app.registerGame(ReBelloMatch);
 app.registerGame(CucitaMatch);
 app.registerGame(CirullaMatch);
 app.updateNumberOfPlayers();
-app.showDialog("new-game");
+
+window.onload = function() {
+
+    
+    //language settings
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = `locales/${navigator.language}.js`;
+    script.onerror = function() {
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "locales/en.js";
+        document.body.appendChild(script);
+    }
+    document.body.appendChild(script);
+
+    app.showDialog("new-game");
+}
