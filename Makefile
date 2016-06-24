@@ -50,7 +50,7 @@ DATA_DIR      = $(addprefix data/cards/, $(ALL_CARDS)) \
                 $(addprefix data/, close.svg menu.svg icon.svg icon.png) \
                 $(addprefix data/backgrounds/, red.png green.png blue.png)
 
-LOCALES       = it en
+LOCALES       = it
 LOCALES_FILES = $(addprefix locales/, $(addsuffix .js, $(LOCALES)))
 LOCALES_JSON  = $(addprefix locales_json/, $(addsuffix .json, $(LOCALES)))
 
@@ -85,7 +85,7 @@ $(LOCALES_FILES): $$(subst .js,.json,$$(subst locales,locales_json,$$@))
 	echo "app.loadLocale(locale);" >> $@
 
 .PHONY: fetch-locales
-fetch-locales: clean-locales-json $(LOCALES_JSON)
+fetch-locales: clean-locales-json $(LOCALES_JSON) locales_json/en.json
 $(LOCALES_JSON):
 	mkdir -p locales_json
 	lang=$(basename $(notdir $@)); \
@@ -93,6 +93,9 @@ $(LOCALES_JSON):
 	curl --user $$user -L -X GET \
 	https://www.transifex.com/api/2/project/scopa/resource/enjson/translation/$$lang \
 	| python3 -c 'import sys, json; print(json.load(sys.stdin, encoding="utf-8")["content"])' > locales_json/$$lang.json;
+
+locales_json/en.json: index.html
+	python3 locale_extractor.py index.html locales_json/en.json
 
 .PHONY: clean-locales-json
 clean-locales-json:

@@ -41,7 +41,7 @@ You can specify the directory where Qt 5 include files are on your system
 (default is /usr/include/qt) and the system libraries directory (default is
 /usr/lib):
 
-  QTINCPATH=/path/to/qt/include/files LIBSPATH=/path/to/system/lib/directory make
+  make QTINCPATH=/path/to/qt/include/files LIBSPATH=/path/to/system/lib/directory
 
 You can use the following command to run the application:
 
@@ -49,7 +49,7 @@ You can use the following command to run the application:
 
 To install the application inside the DIR directory run:
 
-  INSTALLPATH=DIR make install
+  make INSTALLPATH=DIR install
 
 Then you can run it with the following command:
 
@@ -63,6 +63,7 @@ LICENSING
  * The following files:
  
     - Makefile
+    - locale_extractor.py
     - index.html
     - style.css
     - data/icon.png

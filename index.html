@@ -83,31 +83,31 @@
         </table>
         
         <div class="menu" id="menu" hidden>
-            <label id="new-game-item" data-string-id="new-game" data-dialog="new-game"></label>
-            <label id="settings-item" data-string-id="settings" data-dialog="settings"></label>
-            <label id="cronology-item" data-string-id="cronology" data-dialog="cronology"></label>
-            <label id="help-item" data-string-id="help" data-dialog="help"></label>
-            <label id="about-item" data-string-id="about" data-dialog="about"></label>
+            <label id="new-game-item" data-string-id="new-game" data-dialog="new-game">New game...</label>
+            <label id="settings-item" data-string-id="settings" data-dialog="settings">Settings</label>
+            <label id="cronology-item" data-string-id="cronology" data-dialog="cronology">Cronology</label>
+            <label id="help-item" data-string-id="help" data-dialog="help">Help</label>
+            <label id="about-item" data-string-id="about" data-dialog="about">About</label>
         </div>
         
         <div class="dialog" id="new-game" hidden>
             <div class="window">
                 <div class="titlebar">
-                    <label data-string-id="new-game"></label>
+                    <label data-string-id="new-game">New game...</label>
                     <label class="button close" data-dialog="new-game"></label>
                 </div>
                 
                 <div class="content">
-                    <label data-string-id="name"></label>
+                    <label data-string-id="name">Name:</label>
                     <input type="text" id="userName"></input><br>
                     
-                    <label data-string-id="variant"></label>
+                    <label data-string-id="variant">Variant:</label>
                     <select id="variant"></select><br>
                 
-                    <label data-string-id="number-of-players"></label>
+                    <label data-string-id="number-of-players">Number of players:</label>
                     <select id="numberOfPlayers"></select><br>
                                 
-                    <button id="start-game" data-string-id="start-game"></button>
+                    <button id="start-game" data-string-id="start-game">Start game</button>
                 </div>
             </div>
         </div>
@@ -115,26 +115,26 @@
         <div class="dialog" id="settings" hidden>
             <div class="window">
                 <div class="titlebar">
-                    <label data-string-id="settings"></label>
+                    <label data-string-id="settings">Settings</label>
                     <label class="button close" data-dialog="settings"></label>
                 </div>
                 
                 <div class="content">
-                    <label data-string-id="cards-type"></label>
+                    <label data-string-id="cards-type">Cards type:</label>
                     <select id="cardType"></select><br>
                     
-                    <label data-string-id="speed"></label>
+                    <label data-string-id="speed">Speed:</label>
                     <select id="speed">
-                        <option id="slow" data-string-id="slow"></option>
-                        <option id="medium" data-string-id="medium"></option>
-                        <option id="fast" data-string-id="fast"></option>
+                        <option id="slow" data-string-id="slow">Slow</option>
+                        <option id="medium" data-string-id="medium">Medium</option>
+                        <option id="fast" data-string-id="fast">Fast</option>
                     </select><br>
                     
-                    <label data-string-id="show_value_on_cards"></label>
+                    <label data-string-id="show_value_on_cards">Show value on cards:</label>
                     <input type="checkbox" id="show_value_on_cards"></input>
                     <br>
                                 
-                    <label data-string-id="background"></label><br>
+                    <label data-string-id="background">Background:</label><br>
                     <img class="backgroundPreview" src="data/backgrounds/green.png"></img><br>
                     <img class="backgroundPreview" src="data/backgrounds/blue.png"></img><br>
                     <img class="backgroundPreview" src="data/backgrounds/red.png"></img>
@@ -145,14 +145,14 @@
         <div class="dialog" id="cronology" hidden>
             <div class="window">
                 <div class="titlebar">
-                    <label data-string-id="cronology"></label>
+                    <label data-string-id="cronology">Cronology</label>
                     <label class="button close" data-dialog="cronology"></label>
                 </div>
                 
                 <div class="content">
-                    <h3 data-string-id="messages"></h3>
+                    <h3 data-string-id="messages">Messages</h3>
                     <p id="messages-log"></p>
-                    <h3 data-string-id="moves"></h3>
+                    <h3 data-string-id="moves">Moves</h3>
                 </div>
             </div>
         </div>
@@ -160,7 +160,7 @@
         <div class="dialog" id="help" hidden>
             <div class="window">
                 <div class="titlebar">
-                    <label data-string-id="help"></label>
+                    <label data-string-id="help">Help</label>
                     <label class="button close" data-dialog="help"></label>
                 </div>
                 
@@ -178,7 +178,7 @@
         <div class="dialog" id="about" hidden>
             <div class="window">
                 <div class="titlebar">
-                    <label data-string-id="about"></label>
+                    <label data-string-id="about">About</label>
                     <label class="button close" data-dialog="about"></label>
                 </div>
                 
@@ -234,7 +234,7 @@
         <div class="dialog" id="summary" hidden>
             <div class="window">
                 <div class="titlebar">
-                    <label data-string-id="match-summary"></label>
+                    <label data-string-id="match-summary">Match summary</label>
                     <label class="button close" data-dialog="summary" id="summary-close-btn"></label>
                 </div>
                 
@@ -242,31 +242,31 @@
                     <table>
                         <tbody id="summaryTable">
                             <tr id="players">
-                                <td data-string-id="team"></td>
+                                <td data-string-id="team">Team</td>
                             </tr>
                             <tr id="cards">
-                                <td data-string-id="cards"></td>
+                                <td data-string-id="cards">Cards</td>
                             </tr>
                             <tr id="primiera">
-                                <td data-string-id="primiera"></td>
+                                <td data-string-id="primiera">Primiera</td>
                             </tr>
                             <tr id="seven_of_coins">
-                                <td data-string-id="seven-of-coins"></td>
+                                <td data-string-id="seven-of-coins">Seven of coins</td>
                             </tr>
                             <tr id="re_bello">
-                                <td data-string-id="re-bello"></td>
+                                <td data-string-id="re-bello">Re Bello</td>
                             </tr>
                             <tr id="coins">
-                                <td data-string-id="coins"></td>
+                                <td data-string-id="coins">Coins</td>
                             </tr>
                             <tr id="scopa">
-                                <td data-string-id="scopa"></td>
+                                <td data-string-id="scopa">Scopa</td>
                             </tr>
                             <tr id="partial">
-                                <td data-string-id="partial"></td>
+                                <td data-string-id="partial">Partial</td>
                             </tr>
                             <tr id="total">
-                                <td data-string-id="total"></td>
+                                <td data-string-id="total">Total</td>
                             </tr>
                         </tbody>
                     </table>
@@ -277,12 +277,13 @@
         <div class="dialog" id="match-end" hidden>
             <div class="window">
                 <div class="titlebar">
-                    <label data-string-id="match-end"></label>
+                    <label data-string-id="match-end">Match end</label>
                     <label class="button close" data-dialog="match-end" id="match-end-close-btn"></label>
                 </div>
                 
                 <div class="content">
                     <h3 id="winner"></h3>
+                    <label data-string-prototype="winner" hidden>Team {0} wins!</label>
                 </div>
             </div>
         </div>
@@ -290,7 +291,7 @@
         <div class="dialog" id="move-choice" hidden>
             <div class="window">
                 <div class="titlebar">
-                    <label data-string-id="move-choice"></label>
+                    <label data-string-id="move-choice">Select the cards you want to take:</label>
                     <label class="button close" data-dialog="move-choice"></label>
                 </div>
                 
@@ -301,6 +302,10 @@
         </div>
         
         <div id="messages">
+            <label data-string-prototype="first_player" style="display:none">{0} starts!</label>
+            <label data-string-prototype="cards_value_lt_10" style="display:none">The sum of {0} cards is less then 10</label>
+            <label data-string-prototype="2_equal_cards" style="display:none">{0} has 2 equal cards</label>
+            <label data-string-prototype="3_equal_cards" style="display:none">{0} has 3 equal cards</label>
         </div>
         
         <script type="text/javascript" src="js/utils.js"></script>

@@ -38,5 +38,4 @@ var locale =
 "winner": "Team {0} wins!"
 }
 
-
 app.loadLocale(locale);

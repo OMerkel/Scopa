@@ -574,13 +574,26 @@ ScopaApplication.prototype.registerGame = function(Game)
 
 ScopaApplication.prototype.loadLocale = function(locale)
 {
-    this.locale = locale;
-    
     var labels = document.querySelectorAll("[data-string-id]");
     for (var i=0; i<labels.length; i++)
     {
-        labels[i].textContent = this.locale[labels[i].dataset.stringId];
+        labels[i].textContent = locale[labels[i].dataset.stringId];
     }
+    
+    labels = document.querySelectorAll("[data-string-prototype]");
+    for (var i=0; i<labels.length; i++)
+    {
+        labels[i].textContent = locale[labels[i].dataset.stringPrototype];
+    }
+}
+
+ScopaApplication.prototype.getLocaleString = function(stringId)
+{
+    var proto = document.querySelector(`[data-string-prototype='${stringId}']`);
+    if (proto)
+        return proto.textContent;
+    else
+        return "";
 }
 
 ScopaApplication.prototype.updateNumberOfPlayers = function() {
@@ -859,9 +872,7 @@ ScopaApplication.prototype.analyze = function(response)
             response.infos[i].info === "2_equal_cards" ||
             response.infos[i].info === "3_equal_cards")
         {
-            var string = "";
-            if (this.locale[response.infos[i].info])
-                string = this.locale[response.infos[i].info].format(response.infos[i].data);
+            var string = this.getLocaleString(response.infos[i].info).format(response.infos[i].data);
             this.displayMessage(response.infos[i].info, string);
         }
         
@@ -951,9 +962,7 @@ ScopaApplication.prototype.analyze = function(response)
         
         if (response.infos[i].info === "winner")
         {
-            var string = "";
-            if (this.locale["winner"])
-                string = this.locale["winner"].format(response.infos[i].data);
+            var string = this.getLocaleString("winner").format(response.infos[i].data);
             document.querySelector("#winner").textContent = string;
             document.querySelector("#match-end").hidden = false;
             return;
@@ -1079,19 +1088,14 @@ app.registerGame(CirullaMatch);
 app.updateNumberOfPlayers();
 
 window.onload = function() {
-
-    
     //language settings
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src = `locales/${navigator.language}.js`;
-    script.onerror = function() {
+    if (navigator.language && navigator.language != "en")
+    {
         var script = document.createElement("script");
         script.type = "text/javascript";
-        script.src = "locales/en.js";
+        script.src = `locales/${navigator.language}.js`;
         document.body.appendChild(script);
     }
-    document.body.appendChild(script);
 
     app.showDialog("new-game");
 }
