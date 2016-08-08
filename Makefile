@@ -89,10 +89,7 @@ fetch-locales: clean-locales-json $(LOCALES_JSON) locales_json/en.json
 $(LOCALES_JSON):
 	mkdir -p locales_json
 	lang=$(basename $(notdir $@)); \
-	user=$$(echo $$(head -n 1 transifex) | tr '\n' ' '); \
-	curl --user $$user -L -X GET \
-	https://www.transifex.com/api/2/project/scopa/resource/enjson/translation/$$lang \
-	| python3 -c 'import sys, json; print(json.load(sys.stdin, encoding="utf-8")["content"])' > locales_json/$$lang.json;
+	curl -X GET https://hosted.weblate.org/api/translations/scopa/Translations/$$lang/file/ > locales_json/$$lang.json;
 
 locales_json/en.json: index.html
 	python3 locale_extractor.py index.html locales_json/en.json
