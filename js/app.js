@@ -1050,9 +1050,6 @@ ScopaApplication.prototype.analyze = function(response)
                 offset.left += Math.floor(0.3*this.graphicsManager.cw);
             }
             
-            console.log({transform: cardImg.style.transform}, 
-                    {transform: `translate(${offset.left}px, ${offset.top}px)`})
-            
             cardImg.animate([
                 // keyframes
                     {transform: cardImg.style.transform}, 
