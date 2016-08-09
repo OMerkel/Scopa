@@ -21,21 +21,21 @@
  * through which recipients can access the Corresponding Source.
  *
  * @licend  The above is the entire license notice
- * for the JavaScript code in this page.
- *
- */
-
-String.prototype.format = function()
-{
-    var tmp = this.toString();
-    for (var i=0; i<arguments.length; i++)
-    {
-        tmp = tmp.split(`{${i}}`).join(arguments[i]);
-    }
-    return tmp;
-}
-
-function get_generator(property, default_value)
+ * for the JavaScript code in this page.                                                                                                                                
+ *                                                                                                                                                                      
+ */                                                                                                                                                                     
+                                                                                                                                                                        
+String.prototype.format = function()                                                                                                                                    
+{                                                                                                                                                                       
+    var tmp = this.toString();                                                                                                                                          
+    for (var i=0; i<arguments.length; i++)                                                                                                                              
+    {                                                                                                                                                                   
+        tmp = tmp.split(`{${i}}`).join(arguments[i]);                                                                                                                   
+    }                                                                                                                                                                   
+    return tmp;                                                                                                                                                         
+}                                                                                                                                                                       
+                                                                                                                                                                        
+function get_generator(property, default_value)                                                                                                                         
 {
     return function() {
         return localStorage[property] || default_value;
@@ -688,8 +688,7 @@ ScopaApplication.prototype.onResize = function(e)
         for (var i=0; i<fixedCards.length; i++)
         {
             offset = this.getOffset(`#${fixedCards[i].dataset.placeHolder}`);
-            fixedCards[i].style.top = `${offset.top}px`;
-            fixedCards[i].style.left = `${offset.left}px`;
+            fixedCards[i].style.transform = `translate(${offset.left}px, ${offset.top}px)`;
         }
         
         setTimeout(function(app){
@@ -716,9 +715,6 @@ ScopaApplication.prototype.onStartGame = function()
     {
         used[i].dataset.used = 0;
     }
-    
-    //clean animations
-    document.getElementById("animations").innerHTML = "";
     
     var number_of_players = document.querySelector("#numberOfPlayers").selectedOptions[0].id.replace("numberOfPlayers-","");
     var variant = this.variants[document.querySelector("#variant").selectedOptions[0].dataset.index];
@@ -843,8 +839,7 @@ ScopaApplication.prototype.updateCards = function(cards, id)
                     deckImg.dataset.placeHolder = document.querySelector(`div[data-id='${cards[i].id}']`).id;
                     document.body.appendChild(deckImg);
                     offset = this.getOffset(`div[data-id='${cards[i].id}']`);
-                    deckImg.style.top = `${offset.top}px`;
-                    deckImg.style.left = `${offset.left}px`;
+                    deckImg.style.transform = `translate(${offset.left}px, ${offset.top}px)`;
                 }
                 
                 this.graphicsManager.updateDeckImg(deckImg, cards[i]);
@@ -970,8 +965,6 @@ ScopaApplication.prototype.analyze = function(response)
     }
 
     this.updateCards(response.cards, document.querySelector("#mainDeck").dataset.id);
-    var animations = document.querySelector("#animations");
-    animations.innerHTML = "";
     var wait = 1;
     
     for (var i=0; i<response.moves.length; i++)
@@ -991,8 +984,7 @@ ScopaApplication.prototype.analyze = function(response)
                 cardImg.id = `absCard${card.id}`;
                 document.body.appendChild(cardImg);
                 offset = this.getOffset("#mainDeck");
-                cardImg.style.top = `${offset.top}px`;
-                cardImg.style.left = `${offset.left}px`;
+                cardImg.style.transform = `translate(${offset.left}px, ${offset.top}px)`;
                 this.graphicsManager.updateCardImg(cardImg, card);
                 
                 if (dest.id === "humanCards")
@@ -1041,33 +1033,38 @@ ScopaApplication.prototype.analyze = function(response)
                 }
             }
             
+            if (response.moves[i].move_on)
+            {
+                placeHolder.dataset.used = 0;
+                var move_on = document.querySelector(`#absCard${response.moves[i].move_on.id}`);
+                placeHolder = document.querySelector(`#${move_on.dataset.placeHolder}`);
+            }
+            
             cardImg.dataset.placeHolder = placeHolder.id;
             
             var offset = this.getOffset(`#${placeHolder.id}`);
             if (response.moves[i].move_on)
             {
                 wait = 1.5;
-                offset = this.getOffset(`#absCard${response.moves[i].move_on.id}`);
                 offset.top += Math.floor(0.3*this.graphicsManager.cw);
                 offset.left += Math.floor(0.3*this.graphicsManager.cw);
             }
             
-            var animation = `
-            @keyframes card${card.id} {
-                0%    {
-                    top: ${cardImg.y}px; 
-                    left: ${cardImg.x}px;
-                }
-                100% {
-                    top: ${offset.top}px;
-                    left: ${offset.left}px;
-                }
-            }`;
+            console.log({transform: cardImg.style.transform}, 
+                    {transform: `translate(${offset.left}px, ${offset.top}px)`})
             
-            animations.innerHTML += animation;
-            cardImg.style.animation = `card${card.id} ${settings.animation_duration[settings.speed]}s`;
-            cardImg.style.top = `${offset.top}px`;
-            cardImg.style.left = `${offset.left}px`;
+            cardImg.animate([
+                // keyframes
+                    {transform: cardImg.style.transform}, 
+                    {transform: `translate(${offset.left}px, ${offset.top}px)`}
+                ], { 
+                    // timing options
+                    duration: settings.animation_duration[settings.speed]*1000,
+                    easing: "linear"
+                }
+            );
+            
+            cardImg.style.transform = `translate(${offset.left}px, ${offset.top}px)`;
         }
     }
     
