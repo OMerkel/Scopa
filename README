@@ -17,7 +17,10 @@ It provides 5 variations of the original game and 3 types of cards.
 USAGE
 =====
 
-Open the file index.html with a web browser.
+Open the file index.html with a web browser. Since this software uses some new
+HTML features you must run it inside one of the following browsers:
+ * Firefox 48 or any later version (Element.animate was introduced in version 48)
+ * Chrome/Chromium 49 or any later version (css variables were introduced in version 49)
 
 Alternatively you can use the Qt application, to be built as described in the
 next section.
@@ -49,13 +52,13 @@ You can use the following command to run the application:
 
 To install the application inside the DIR directory run:
 
-  make INSTALLPATH=DIR install
+  make DESTDIR=DIR install
 
 Then you can run it with the following command:
 
-  ./DIR/bin/scopa
+  ./DIR/usr/bin/scopa
 
-Or simply run "scopa" if DIR/bin is in your PATH variable.
+Or simply run "scopa" if DIR/usr/bin is in your PATH variable.
 
 LICENSING
 =========

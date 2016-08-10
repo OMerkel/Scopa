@@ -19,7 +19,7 @@
 
 QTINCPATH     ?= /usr/include/qt
 LIBSPATH      ?= /usr/lib
-INSTALLPATH   ?= dist
+DESTDIR   ?= dist
 
 # c++ compilation stuff
 DEFINES       = -DQT_NO_DEBUG -DQT_WEBENGINEWIDGETS_LIB -DQT_WEBENGINECORE_LIB \
@@ -100,19 +100,18 @@ clean-locales-json:
 
 .PHONY: install
 install: all scopa.desktop
-	mkdir -p $(INSTALLPATH)
-	mkdir -p $(INSTALLPATH)/share/applications
-	mkdir -p $(INSTALLPATH)/share/icons/hicolor/scalable/apps
-	mkdir -p $(INSTALLPATH)/share/icons/hicolor/256x256/apps
-	cp -r build/* $(INSTALLPATH)/
-	cp scopa.desktop $(INSTALLPATH)/share/applications/
-	cp data/icon.svg $(INSTALLPATH)/share/icons/hicolor/scalable/apps/scopa.svg
-	cp data/icon.png $(INSTALLPATH)/share/icons/hicolor/256x256/apps/scopa.png
+	mkdir -p $(DESTDIR)/usr/share/applications
+	mkdir -p $(DESTDIR)/usr/share/icons/hicolor/scalable/apps
+	mkdir -p $(DESTDIR)/usr/share/icons/hicolor/256x256/apps
+	cp -r build/* $(DESTDIR)/usr/
+	cp scopa.desktop $(DESTDIR)/usr/share/applications/
+	cp data/icon.svg $(DESTDIR)/usr/share/icons/hicolor/scalable/apps/scopa.svg
+	cp data/icon.png $(DESTDIR)/usr/share/icons/hicolor/256x256/apps/scopa.png
 
 .PHONY: install-html-only
 install-html-only: $(STATIC_FILES)
-	mkdir -p $(INSTALLPATH)
-	cp -r build/share/scopa/* $(INSTALLPATH)/
+	mkdir -p $(DESTDIR)
+	cp -r build/share/scopa/* $(DESTDIR)/
 
 .PHONY: tests
 tests: tests.html

@@ -2,7 +2,6 @@ var locale =
 {
     "new-game": "Nuova partita...",
     "settings": "Impostazioni",
-    "cronology": "Cronologia",
     "help": "Aiuto",
     "about": "Informazioni",
     "close": "Chiudi",
@@ -35,6 +34,7 @@ var locale =
     "cards_value_lt_10": "La somma delle carte di {0} è minore di 10",
     "2_equal_cards": "{0} ha 2 carte uguali",
     "3_equal_cards": "{0} ha 3 carte uguali",
-    "winner": "La squadra {0} ha vinto!"
+    "winner": "La squadra {0} ha vinto!",
+    "chronology": "Cronologia"
 }
 app.loadLocale(locale);
