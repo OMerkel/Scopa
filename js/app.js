@@ -427,7 +427,7 @@ ScopaApplication = function()
     {
         var option = document.createElement("option");
         option.id = cardType;
-        option.appendChild(document.createTextNode(cardType));
+        option.textContent = cardType;
         cardTypeSelect.appendChild(option);
     }
     document.getElementById(settings.cards).selected = true;
@@ -566,7 +566,7 @@ ScopaApplication.prototype.registerGame = function(Game)
     var variantSelect = document.querySelector("#variant");
     var option = document.createElement("option");
     option.dataset.index = this.variants.length-1;
-    option.appendChild(document.createTextNode(info.name));
+    option.textContent = info.name;
     variantSelect.appendChild(option);
     
     if (settings.variant == info.name) option.selected = true;
@@ -577,13 +577,15 @@ ScopaApplication.prototype.loadLocale = function(locale)
     var labels = document.querySelectorAll("[data-string-id]");
     for (var i=0; i<labels.length; i++)
     {
-        labels[i].textContent = locale[labels[i].dataset.stringId];
+        if (locale[labels[i].dataset.stringId])
+            labels[i].textContent = locale[labels[i].dataset.stringId];
     }
     
     labels = document.querySelectorAll("[data-string-prototype]");
     for (var i=0; i<labels.length; i++)
     {
-        labels[i].textContent = locale[labels[i].dataset.stringPrototype];
+        if (locale[labels[i].dataset.stringPrototype])
+            labels[i].textContent = locale[labels[i].dataset.stringPrototype];
     }
 }
 
@@ -641,8 +643,8 @@ ScopaApplication.prototype.displayMessage = function(stringId, string) {
     
     //update messages log
     var messagesLog = document.getElementById("messages-log");
-    messagesLog.appendChild(message.cloneNode(false));
-    messagesLog.appendChild(br.cloneNode(false));
+    messagesLog.appendChild(message.cloneNode(true));
+    messagesLog.appendChild(br.cloneNode(true));
     
     //display notification
     message.style.animation = `message ${settings.notifications_duration}s forwards`;
@@ -936,7 +938,7 @@ ScopaApplication.prototype.analyze = function(response)
                     if (summary[j][row.id] != undefined)
                     {
                         var td = document.createElement("td");
-                        td.appendChild(document.createTextNode(`${summary[j][row.id]}`));
+                        td.textContent = `${summary[j][row.id]}`;
                         row.appendChild(td);
                         row.hidden = false;
                     }
@@ -971,6 +973,20 @@ ScopaApplication.prototype.analyze = function(response)
     {
         var source = document.querySelector(`*[data-id='${response.moves[i].source}']`);
         var dest = document.querySelector(`*[data-id='${response.moves[i].dest}']`);
+        var chronology = document.querySelector("#moves-log");
+        
+        //update chronology
+        if (source.id === "humanCards")
+        {
+            chronology.innerHTML = "";
+        }
+        if (source.id !== "mainDeck")
+        {
+            var label = document.createElement("label");
+            label.textContent = `${response.moves[i].source} -> ${response.moves[i].dest}`;
+            chronology.appendChild(label);
+            chronology.appendChild(document.createElement("br"));
+        }
         
         for (var j=0; j<response.moves[i].cards.length; j++)
         {
@@ -1009,15 +1025,24 @@ ScopaApplication.prototype.analyze = function(response)
             {
                 cardImg = document.querySelector(`#absCard${card.id}`);
                 document.getElementById(cardImg.dataset.placeHolder).dataset.used = 0;
+                
+                //show the card when cpu plays it
                 if (source.id != "humanCards" && source.id != "tableCards")
                 {
                     this.graphicsManager.updateCardImg(cardImg, card);
                 }
                 
+                //delete card after it is taken from a player
                 if (source.id === "tableCards")
                 {
                     setTimeout((function(cardImg) {return function(){document.body.removeChild(cardImg);}})(cardImg), 1000);
                 }
+                
+                //update chronology
+                var img = document.createElement("img");
+                this.graphicsManager.updateCardImg(img, card);
+                chronology.appendChild(img);
+                
             }
             
             var placeHolders  = dest.querySelectorAll("div");
@@ -1054,7 +1079,7 @@ ScopaApplication.prototype.analyze = function(response)
                 // keyframes
                     {transform: cardImg.style.transform}, 
                     {transform: `translate(${offset.left}px, ${offset.top}px)`}
-                ], { 
+                ], {
                     // timing options
                     duration: settings.animation_duration[settings.speed]*1000,
                     easing: "linear"
@@ -1063,6 +1088,10 @@ ScopaApplication.prototype.analyze = function(response)
             
             cardImg.style.transform = `translate(${offset.left}px, ${offset.top}px)`;
         }
+        
+        //update chronology
+        if (source.id !== "mainDeck")
+            chronology.appendChild(document.createElement("br"));
     }
     
     setTimeout(function(app){app.updateCards(response.cards)},
