@@ -1,0 +1,16 @@
+[Desktop Entry]
+Categories=Game
+Comment[it_IT]=Il gioco della Scopa
+Comment=The Italian card game Scopa
+Exec=scopa
+GenericName[it_IT]=Scopa
+GenericName=Scopa
+Icon=scopa
+MimeType=
+Name[it_IT]=Scopa
+Name=Scopa
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application

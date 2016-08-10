@@ -99,9 +99,15 @@ clean-locales-json:
 	rm locales_json/*
 
 .PHONY: install
-install: all
+install: all scopa.desktop
 	mkdir -p $(INSTALLPATH)
+	mkdir -p $(INSTALLPATH)/share/applications
+	mkdir -p $(INSTALLPATH)/share/icons/hicolor/scalable/apps
+	mkdir -p $(INSTALLPATH)/share/icons/hicolor/256x256/apps
 	cp -r build/* $(INSTALLPATH)/
+	cp scopa.desktop $(INSTALLPATH)/share/applications/
+	cp data/icon.svg $(INSTALLPATH)/share/icons/hicolor/scalable/apps/scopa.svg
+	cp data/icon.png $(INSTALLPATH)/share/icons/hicolor/256x256/apps/scopa.png
 
 .PHONY: install-html-only
 install-html-only: $(STATIC_FILES)
