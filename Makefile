@@ -19,7 +19,11 @@
 
 QTINCPATH     ?= /usr/include/qt
 LIBSPATH      ?= /usr/lib
-DESTDIR   ?= dist
+DESTDIR       ?= /
+
+ifeq ($(MAKECMDGOALS), install-html-only)
+DESTDIR = ./dist
+endif
 
 # c++ compilation stuff
 DEFINES       = -DQT_NO_DEBUG -DQT_WEBENGINEWIDGETS_LIB -DQT_WEBENGINECORE_LIB \
