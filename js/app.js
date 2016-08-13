@@ -824,28 +824,25 @@ ScopaApplication.prototype.initTable = function(cards)
     }
 }
 
-ScopaApplication.prototype.updateCards = function(cards, id)
+ScopaApplication.prototype.updateCards = function(cards)
 {
     for (var i=0; i<cards.length; i++)
     {
-        if (cards[i].id === id || !id)
+        if (cards[i].type === "deck")
         {
-            if (cards[i].type === "deck")
+            var deckImg = document.querySelector(`#${cards[i].id}Img`);
+            if (!deckImg)
             {
-                var deckImg = document.querySelector(`#${cards[i].id}Img`);
-                if (!deckImg)
-                {
-                    deckImg = document.createElement("img");
-                    deckImg.className = "fixedDeck";
-                    deckImg.id = `${cards[i].id}Img`;
-                    deckImg.dataset.placeHolder = document.querySelector(`div[data-id='${cards[i].id}']`).id;
-                    document.body.appendChild(deckImg);
-                    offset = this.getOffset(`div[data-id='${cards[i].id}']`);
-                    deckImg.style.transform = `translate(${offset.left}px, ${offset.top}px)`;
-                }
-                
-                this.graphicsManager.updateDeckImg(deckImg, cards[i]);
+                deckImg = document.createElement("img");
+                deckImg.className = "fixedDeck";
+                deckImg.id = `${cards[i].id}Img`;
+                deckImg.dataset.placeHolder = document.querySelector(`div[data-id='${cards[i].id}']`).id;
+                document.body.appendChild(deckImg);
+                offset = this.getOffset(`div[data-id='${cards[i].id}']`);
+                deckImg.style.transform = `translate(${offset.left}px, ${offset.top}px)`;
             }
+            
+            this.graphicsManager.updateDeckImg(deckImg, cards[i]);
         }
     }
 }
@@ -1093,9 +1090,7 @@ ScopaApplication.prototype.analyze = function(response)
         if (source.id !== "mainDeck")
             chronology.appendChild(document.createElement("br"));
     }
-    
-    setTimeout(function(app){app.updateCards(response.cards)},
-               settings.animation_duration[settings.speed]*wait*1000, this);
+
     setTimeout(function(app){
         var newResponse = app.match.send({"command": "next"});
         app.analyze(newResponse);

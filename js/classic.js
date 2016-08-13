@@ -60,20 +60,18 @@ function ClassicMatch()
     }
     
     this.victoryPoints = 11;
+    
+    this._responsesQueue = [];
 }
 
 ClassicMatch.prototype.start = function(players)
 {
-    response = {
-        "cards": [],
-        "moves": [],
-        "infos": []
-    }
+    this._responsesQueue = [];
+    response = new Response();
     
     var cards = [];
     
     this._reset = false;
-    this._pendingMove = null;
     this.players = [];
     
     if (players.length === 2) {
@@ -172,7 +170,7 @@ ClassicMatch.prototype.giveCardsToPlayers = function(response)
 }
 
 ClassicMatch.prototype.send = function(message)
-{
+{    
     if (message.command === "info")
         return {
             "name": this.name,
@@ -185,11 +183,10 @@ ClassicMatch.prototype.send = function(message)
     
     if (message.command === "next")
     {
-        var response = {
-            "cards": [],
-            "moves": [],
-            "infos": []
-        }
+        if (this._responsesQueue.length > 0)
+            return this._responsesQueue.shift();
+        
+        var response = new Response();
 
         if (this._reset)
         {
@@ -206,11 +203,6 @@ ClassicMatch.prototype.send = function(message)
             response.cards.push(this.deck.toObject(), this.teams[0].takenCards.toObject(),
                 this.teams[1].takenCards.toObject()
             );
-        }
-        
-        if (this._pendingMove)
-        {
-            return this.completeMove();
         }
         
         if (this.players[this.currentPlayer].hand.length === 0)
@@ -230,8 +222,8 @@ ClassicMatch.prototype.send = function(message)
             {
                 if (this.tableCards.toArray().length > 0)
                 {
-                    this._pendingMove = this.tableCards.toArray();
-                    return this.completeMove(this.lastTaker);
+                    var move = this.tableCards.move(this.players[this.lastTaker].team.takenCards, this.tableCards.toArray());
+                    return new Response([], [move]);
                 }
                 this._reset = true;
                 response.infos.push({"info": "summary", "data": this.countPoints()});
@@ -253,28 +245,20 @@ ClassicMatch.prototype.send = function(message)
     }
     
     if (message.command === "human_play")
-    {
-        var response = {
-            "cards": [],
-            "moves": [],
-            "infos": []
-        }
+    {        
         if (message.data.player != this.players[this.currentPlayer].name ||
             this.players[this.currentPlayer].type === "cpu")
-            return response;
+            return new Response();
         
         possibleTakes = this.take(message.data.card, this.tableCards);
         if (possibleTakes.length == 0) possibleTakes.push([]);
+        
         if (possibleTakes.length > 1 && message.data.take === undefined)
-        {
-            response.infos.push({info: "choice", data: possibleTakes});
-        }
-        else
-        {
-            if (message.data.take === undefined) message.data.take = 0;
-            response = this.playCard(message.data.card, possibleTakes[message.data.take]);
-        }
-        return response;
+            return new Response([{info: "choice", data: possibleTakes}]);
+
+        if (message.data.take === undefined) message.data.take = 0;
+        
+        return this.playCard(message.data.card, possibleTakes[message.data.take]);
     }
 }
 
@@ -528,60 +512,33 @@ ClassicMatch.prototype.cpuBestMove = function() {
  * cardsToTake = [Card,Card...]
  */
 ClassicMatch.prototype.playCard = function(card, cardsToTake) {
-    response = {
-        "moves": [],
-        "cards": [],
-        "infos": []
-    };
-    
-    var move = this.players[this.currentPlayer].hand.move(this.tableCards, [card]);
+    //move 'card' to tableCards 
+    var move = this.players[this.currentPlayer].hand.move(this.tableCards, [card]);    
     
     if (cardsToTake.length != 0)
     {
         move.move_on = new Card(cardsToTake[0]);
-        this._pendingMove = cardsToTake;
-        this._pendingMove.unshift(card);
-    }
-    else
-    {
-        this.currentPlayer = this.nextPlayer();
-    }
-    
-    response.moves.push(move);
-    
-    return response;
-}
-
-ClassicMatch.prototype.completeMove = function(player)
-{
-    response = {
-        "moves": [],
-        "cards": [],
-        "infos": []
-    };
-    
-    if (this._pendingMove)
-    {
-        if (!player)
-        {
-            player = this.currentPlayer;
-            this.lastTaker = this.currentPlayer;
-            this.currentPlayer = this.nextPlayer();
-        }
+        this.lastTaker = this.currentPlayer;
         
-        if (this._pendingMove.length == this.tableCards.toArray().length &&
-            this.players[this.currentPlayer].hand.length != 0)
-        {
-            this.players[player].team.takenCards.side_cards.push(new Card(this._pendingMove[0]));
-            response.infos.push({"scopa": this.players[player].name});
-        }
+        cardsToTake.push(card);
         
-        response.moves.push(this.tableCards.move(this.players[player].team.takenCards, this._pendingMove));
-        response.cards.push(this.players[player].team.takenCards.toObject());
-        this._pendingMove = null;
+        var nextResponse = new Response();
+        
+        if (cardsToTake.length == this.tableCards.toArray().length &&
+            this.players[this.nextPlayer()].hand.length != 0) //check if current player is the last to play
+        {
+            this.players[this.currentPlayer].team.takenCards.side_cards.push(new Card(card));
+            nextResponse.infos.push({"scopa": this.players[this.currentPlayer].name});
+        }
+        nextResponse.moves.push(this.tableCards.move(this.players[this.currentPlayer].team.takenCards, cardsToTake));
+        this._responsesQueue.push(nextResponse);
+        
+        this._responsesQueue.push(new Response([], [], [this.players[this.currentPlayer].team.takenCards.toObject()]));
     }
     
-    return response;
+    this.currentPlayer = this.nextPlayer();
+    
+    return new Response([], [move]);
 }
 
 ClassicMatch.prototype.assignPoints = function(summary)

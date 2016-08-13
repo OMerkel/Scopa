@@ -214,3 +214,10 @@ Player.prototype.update_memory = function(cards, scopa)
         if (cards[i].suit == 0) {this.memory['coins'] += 1} 
     }
 }
+
+function Response(infos=[], moves=[], cards=[])
+{
+    this.infos = infos;
+    this.moves = moves;
+    this.cards = cards;
+}
