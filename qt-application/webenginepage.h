@@ -19,26 +19,26 @@
  *
  */
 
-#include "mainwindow.h"
+#ifndef WEBENGINEPAGE_H
+#define WEBENGINEPAGE_H
 
-MainWindow::MainWindow(QApplication* app)
-{
-    this->setCentralWidget(&view);
-    
-    page = new WebEnginePage(&view);
-    
-    view.setPage(page);
-    
-    page->load(QUrl::fromLocalFile(app->applicationDirPath()+"/../share/scopa/index.html"));
-    
-    QObject::connect(&view, SIGNAL(titleChanged(QString)),
-                     this, SLOT(setWindowTitle(QString)));
-    
-    QObject::connect(&view, SIGNAL(iconChanged(QIcon)),
-                     this, SLOT(updateIcon(QIcon)));
-}
+#include <QtWebEngineWidgets/QWebEnginePage>
+#include <QDesktopServices>
 
-void MainWindow::updateIcon(QIcon icon)
+class WebEnginePage : public QWebEnginePage
 {
-    this->setWindowIcon(icon);
-}
+    Q_OBJECT
+
+public:
+    WebEnginePage(QObject* parent = 0);
+    
+    QWebEnginePage* createWindow(QWebEnginePage::WebWindowType type);
+    
+public slots:
+    void onLinkHovered(QString url);
+
+private:
+    QUrl lastHoveredUrl;
+};
+
+#endif

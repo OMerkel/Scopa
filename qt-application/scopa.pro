@@ -27,6 +27,6 @@ QT       += core gui webenginewidgets
 TARGET   =  scopa
 TEMPLATE =  app
 
-SOURCES  += main.cpp mainwindow.cpp
+SOURCES  += main.cpp mainwindow.cpp webenginepage.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h webenginepage.h

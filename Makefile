@@ -49,7 +49,8 @@ ALL_FILES     = $(DATA_DIR) index.html style.css \
 
 STATIC_FILES  = $(addprefix build/share/scopa/, $(ALL_FILES))
 
-SRC           = $(addprefix qt-application/, main.cpp mainwindow.cpp mainwindow.h)
+SRC           = $(addprefix qt-application/, main.cpp mainwindow.cpp mainwindow.h \
+                                             webenginepage.cpp webenginepage.h)
 
 .PHONY:
 all: build/bin/scopa $(STATIC_FILES)
@@ -113,5 +114,6 @@ tests.html: index.html
 
 .PHONY: clean
 clean:
-	rm -f scopa.o tests.html
+	rm -f tests.html
+	rm -f qt-application/*.o qt-application/moc_*
 	rm -f -r build

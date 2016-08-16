@@ -25,6 +25,7 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWebEngineWidgets/QWebEngineView>
 #include <QtWidgets/QApplication>
+#include "webenginepage.h"
 
 class MainWindow : public QMainWindow
 {
@@ -33,8 +34,12 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QApplication* app);
 
+public slots:
+    void updateIcon(QIcon icon);
+
 private:
     QWebEngineView view;
+    WebEnginePage* page;
 };
 
 #endif
