@@ -524,8 +524,9 @@ ClassicMatch.prototype.playCard = function(card, cardsToTake) {
         
         var nextResponse = new Response();
         
-        if (cardsToTake.length == this.tableCards.toArray().length &&
-            this.players[this.nextPlayer()].hand.length != 0) //check if current player is the last to play
+        //check if there is a Scopa
+        if (cardsToTake.length === this.tableCards.toArray().length &&
+            !(this.players[this.nextPlayer()].hand.length === 0 && this.deck.length === 0))
         {
             this.players[this.currentPlayer].team.takenCards.side_cards.push(new Card(card));
             nextResponse.infos.push({"scopa": this.players[this.currentPlayer].name});
