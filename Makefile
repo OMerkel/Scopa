@@ -17,28 +17,11 @@
 # along with Scopa.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-QTINCPATH     ?= /usr/include/qt
-LIBSPATH      ?= /usr/lib
 DESTDIR       ?= /
 
 ifeq ($(MAKECMDGOALS), install-html-only)
 DESTDIR = ./dist
 endif
-
-# c++ compilation stuff
-DEFINES       = -DQT_NO_DEBUG -DQT_WEBENGINEWIDGETS_LIB -DQT_WEBENGINECORE_LIB \
-                -DQT_QUICK_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_WEBCHANNEL_LIB \
-                -DQT_QML_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB
-
-CXXFLAGS      = -pipe -O2 -std=gnu++11 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-
-INCPATH       = -I$(QTINCPATH)
-
-LIBS          = -L$(LIBSPATH) -lGL -lpthread -lQt5Core -lQt5WebEngineWidgets \
-                -lQt5Widgets -lQt5Gui \
-
-LFLAGS        = -Wl,-O1 -Wl,-rpath,$(LIBSPATH) \
-                -Wl,-rpath-link,$(LIBSPATH)
 
 # static files
 TEN           = 1 2 3 4 5 6 7 8 9 10
@@ -66,15 +49,17 @@ ALL_FILES     = $(DATA_DIR) index.html style.css \
 
 STATIC_FILES  = $(addprefix build/share/scopa/, $(ALL_FILES))
 
+SRC           = $(addprefix qt-application/, main.cpp mainwindow.cpp mainwindow.h)
+
 .PHONY:
 all: build/bin/scopa $(STATIC_FILES)
 
-build/bin/scopa: scopa.o
+build/bin/scopa: qt-application/scopa
 	mkdir -p build/bin
-	g++ $(LFLAGS) -o build/bin/scopa scopa.o $(LIBS)
+	cp qt-application/scopa build/bin/scopa
 
-scopa.o: qt-application/main.cpp
-	g++ -c $(CXXFLAGS) $(INCPATH) -o scopa.o qt-application/main.cpp
+qt-application/scopa: $(SRC) qt-application/scopa.pro
+	cd qt-application; qmake scopa.pro; make
 
 .SECONDEXPANSION:
 $(STATIC_FILES): $$(subst build/share/scopa/,,$$@)

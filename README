@@ -40,12 +40,6 @@ To build the application run:
 
   make
 
-You can specify the directory where Qt 5 include files are on your system 
-(default is /usr/include/qt) and the system libraries directory (default is
-/usr/lib):
-
-  make QTINCPATH=/path/to/qt/include/files LIBSPATH=/path/to/system/lib/directory
-
 You can use the following command to run the application:
 
   ./build/bin/scopa
@@ -63,37 +57,18 @@ Or simply run "scopa" if DIR/usr/bin is in your PATH variable.
 LICENSING
 =========
 
- * The following files:
- 
-    - Makefile
-    - locale_extractor.py
-    - index.html
-    - style.css
-    - data/icon.png
-    - data/icon.svg
-    - data/menu.svg
-    - data/close.svg
-    - data/backgrounds/blue.png
-    - data/backgrounds/green.png
-    - data/backgrounds/red.png
-    - docs/index.html
-    - docs/game-class.html
-    - docs/style.css
-    - js/app.js
-    - js/cirulla.js
-    - js/classic.js
-    - js/cucita.js
-    - js/rebello.js
-    - js/scopone.js
-    - js/utils.js
-    - locales/en.js
-    - locales/it.js
-    - locales_json/en.json
-    - locales_json/it.json
-    - qt-application/main.cpp
-    - tests/tests.js
+ * The jpg files in the "data/cards/Napoletane" directory are public domain
+   images available here: https://commons.wikimedia.org/wiki/Category:Naples_deck
+
+ * The jpg files in the "data/cards/Bergamasche" directory are cropped from
+   the public domain image available here: https://commons.wikimedia.org/wiki/File:Carte_bergamasche.jpg
+   
+ * The jpg files in the "data/cards/Piacentine" directory are cropped from
+   the public domain image available here:
+   https://commons.wikimedia.org/wiki/File:Carte_piacentine_al_completo.jpg
     
-   are part of the Scopa software, Copyright (C) 2016 Marco Scarpetta <marcoscarpetta02@gmail.com>
+   All other files are part of
+   Scopa, Copyright (C) 2016 Marco Scarpetta <marcoscarpetta02@gmail.com>
 
    Scopa is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -107,13 +82,3 @@ LICENSING
 
    You should have received a copy of the GNU General Public License
    along with Scopa.  If not, see <http://www.gnu.org/licenses/>.
-    
- * The jpg files in the "data/cards/Napoletane" directory are public domain
-   images available here: https://commons.wikimedia.org/wiki/Category:Naples_deck
-
- * The jpg files in the "data/cards/Bergamasche" directory are cropped from
-   the public domain image available here: https://commons.wikimedia.org/wiki/File:Carte_bergamasche.jpg
-   
- * The jpg files in the "data/cards/Piacentine" directory are cropped from
-   the public domain image available here:
-   https://commons.wikimedia.org/wiki/File:Carte_piacentine_al_completo.jpg

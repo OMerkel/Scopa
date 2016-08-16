@@ -19,15 +19,15 @@
  *
  */
 
-#include <QtWidgets/QApplication>
 #include "mainwindow.h"
 
-int main(int argc, char *argv[])
+MainWindow::MainWindow(QApplication* app)
 {
-    QApplication app(argc, argv);
+    this->setCentralWidget(&view);
+    this->setWindowTitle("Scopa");
     
-    MainWindow mainWindow(&app);
-    mainWindow.show();
-
-    return app.exec();
+    view.load(QUrl::fromLocalFile(app->applicationDirPath()+"/../share/scopa/index.html"));
+        
+    QIcon icon(app->applicationDirPath()+"/../share/scopa/data/icon.png");
+    this->setWindowIcon(icon); //mainWindow.setWindowIcon(view.page()->icon());
 }

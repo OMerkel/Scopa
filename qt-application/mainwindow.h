@@ -19,15 +19,22 @@
  *
  */
 
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
+
+#include <QtWidgets/QMainWindow>
+#include <QtWebEngineWidgets/QWebEngineView>
 #include <QtWidgets/QApplication>
-#include "mainwindow.h"
 
-int main(int argc, char *argv[])
+class MainWindow : public QMainWindow
 {
-    QApplication app(argc, argv);
-    
-    MainWindow mainWindow(&app);
-    mainWindow.show();
+    Q_OBJECT
 
-    return app.exec();
-}
+public:
+    MainWindow(QApplication* app);
+
+private:
+    QWebEngineView view;
+};
+
+#endif
