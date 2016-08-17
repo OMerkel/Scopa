@@ -31,6 +31,8 @@ CARDS_FILES   = $(addsuffix .jpg, $(addsuffix d, $(TEN)) $(addsuffix c, $(TEN)) 
 
 ALL_CARDS     = $(addprefix Napoletane/, $(CARDS_FILES)) \
                 $(addprefix Piacentine/, $(CARDS_FILES)) \
+                $(addprefix Poker/, $(CARDS_FILES)) \
+                $(addprefix Poker_figures/, $(CARDS_FILES)) \
                 $(addprefix Bergamasche/, $(CARDS_FILES))
 
 DATA_DIR      = $(addprefix data/cards/, $(ALL_CARDS)) \
