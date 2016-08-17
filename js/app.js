@@ -83,11 +83,12 @@ function check_and_set_generator(property, allowed_values)
 
 var global_variables = {
     types_of_cards: {
-        Bergamasche: {number: 40, w: 296, h: 545},
-        Napoletane:  {number: 40, w: 331, h: 547},
-        Piacentine:  {number: 40, w: 330, h: 584},
+        Bergamasche:      {number: 40, w: 296, h: 545},
+        Napoletane:       {number: 40, w: 331, h: 547},
+        Piacentine:       {number: 40, w: 330, h: 584},
+        Poker:            {number: 40, w: 386, h: 560},
+        Poker_figures:    {number: 40, w: 386, h: 560},
         //Francitalia: {number: 40, w: 72,  h: 113},
-        //Poker:       {number: 40, w: 75,  h: 113},
         //Scartini:    {number: 40, w: 72,  h: 113},
         //Siciliane:   {number: 40, w: 67,  h: 113},
         //Toscane:     {number: 40, w: 75,  h: 113},
