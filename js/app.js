@@ -897,11 +897,13 @@ ScopaApplication.prototype.analyze = function(response)
             var takes = response.infos[i].data;
             for (var j=0; j<takes.length; j++)
             {
+                var div = document.createElement("div");
+                div.className = "choice-div";
                 for (var k=0; k<takes[j].length; k++)
                 {
                     cardImg = document.createElement("img");
                     this.graphicsManager.updateCardImg(cardImg, takes[j][k]);
-                    choices.appendChild(cardImg);
+                    div.appendChild(cardImg);
 
                     cardImg.addEventListener("click", (function(app, index){return function(){
                         app.userCanPlay = false;
@@ -916,6 +918,7 @@ ScopaApplication.prototype.analyze = function(response)
                         app.analyze(newResponse);
                     }})(this, j));
                 }
+                choices.appendChild(div);
                 choices.appendChild(document.createElement("br"));
             }
             

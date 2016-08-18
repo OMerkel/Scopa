@@ -228,7 +228,15 @@ div, table, td, tr, body {
 }
 
 /*move choice window*/
-#choices img {
+.choice-div {
+    display: inline-block;
+    background: #ddd;
+    margin: 10px 10px;
+    padding: 10px 10px;
+    border: 1px solid #999;
+}
+
+.choice-div > img {
     padding: 10px;
 }
 

@@ -54,7 +54,7 @@ STATIC_FILES  = $(addprefix build/share/scopa/, $(ALL_FILES))
 SRC           = $(addprefix qt-application/, main.cpp mainwindow.cpp mainwindow.h \
                                              webenginepage.cpp webenginepage.h)
 
-.PHONY:
+.PHONY: all
 all: build/bin/scopa $(STATIC_FILES)
 
 build/bin/scopa: qt-application/scopa
