@@ -532,7 +532,8 @@ ScopaApplication = function()
         app.onResize();
     });
     
-    document.querySelector("#summary-close-btn").addEventListener("click", function() {
+    document.querySelector("#continue").addEventListener("click", function() {
+        document.querySelector("#summary").hidden = true;
         var newResponse = app.match.send({"command": "next"});
         app.analyze(newResponse);
     });
@@ -726,6 +727,7 @@ ScopaApplication.prototype.onStartGame = function()
     this.match = new variant.class();
     
     var message;
+    var teams;
     
     if (number_of_players == 2)
     {
@@ -733,6 +735,7 @@ ScopaApplication.prototype.onStartGame = function()
             {"type": "human", "name": username},
             {"type": "cpu", "name": "cpu1"},
         ]};
+        teams = [username, "cpu1"];
     }
     else
     {
@@ -742,6 +745,7 @@ ScopaApplication.prototype.onStartGame = function()
             {"type": "cpu", "name": "cpu1"},
             {"type": "cpu", "name": "cpu3"},
         ]};
+        teams = [`${username}, cpu1`, "cpu2, cpu3"];
     }
     
     var response = this.match.send(message);
@@ -751,6 +755,35 @@ ScopaApplication.prototype.onStartGame = function()
     settings.username = username;
     
     document.querySelector("#new-game").hidden = true;
+    
+    //init summary dialog
+    var table = document.querySelector("#summaryTable");
+    
+    //remove all columns except the first one
+    for (var j=0; j<table.children.length; j++)
+        for (var k=table.children[j].children.length-1; k>0; k--)
+            table.children[j].removeChild(table.children[j].children[k]);
+
+    for (var k=0; k<table.children.length; k++)
+        table.children[k].hidden = true;
+    
+    var playersRow = table.querySelector("#players");
+    var totalRow = table.querySelector("#total");
+    var td = document.createElement("td");
+    td.textContent = teams[0];
+    playersRow.appendChild(td);
+    td = document.createElement("td");
+    td.textContent = teams[1];
+    playersRow.appendChild(td);
+    playersRow.hidden = false;
+    
+    td = document.createElement("td");
+    td.textContent = "0";
+    totalRow.appendChild(td);
+    td = document.createElement("td");
+    td.textContent = "0";
+    totalRow.appendChild(td);
+    totalRow.hidden = false;
     
     this.analyze(response);
 }
@@ -865,11 +898,25 @@ ScopaApplication.prototype.analyze = function(response)
             this.updateCards(response.infos[i].data);
         }
         
-        //clear chronology
         if (response.infos[i].info === "first_player")
         {
+            //clear chronology
             messagesLog.innerHTML = "";
             movesLog.innerHTML = "";
+            
+            //clean summary dialog
+            var continue_btn = document.querySelector("#continue");
+            continue_btn.parentNode.hidden = true;
+            
+            //hide all rows except total and players
+            var table = document.querySelector("#summaryTable");
+            for (var k=0; k<table.children.length; k++)
+            {
+                if (table.children[k].id === "players" || table.children[k].id === "total")
+                    table.children[k].hidden = false;
+                else
+                    table.children[k].hidden = true;
+            }
         }
         
         if (response.infos[i].info === "first_player" ||
@@ -959,6 +1006,9 @@ ScopaApplication.prototype.analyze = function(response)
                     }
                 }
             }
+            
+            var continue_btn = document.querySelector("#continue");
+            continue_btn.parentNode.hidden = false;
             
             this.showDialog("summary");
             
