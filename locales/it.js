@@ -35,6 +35,7 @@ var locale =
     "2_equal_cards": "{0} ha 2 carte uguali",
     "3_equal_cards": "{0} ha 3 carte uguali",
     "winner": "La squadra {0} ha vinto!",
-    "chronology": "Cronologia"
+    "chronology": "Cronologia",
+    "continue": "Continua"
 }
 app.loadLocale(locale);
