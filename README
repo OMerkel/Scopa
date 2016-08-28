@@ -69,8 +69,13 @@ LICENSING
    
  * The jpg files in the "data/cards/Poker" and "data/cards/Poker_figures" directory are public domain
    images available here: https://commons.wikimedia.org/wiki/Category:Playing_cards_set_by_Byron_Knoll
+   
+ * All files inside the "server" directory are released under
+   the terms of the GNU Affero General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
     
-   All other files are part of
+ * All other files are part of
    Scopa, Copyright (C) 2016 Marco Scarpetta <marcoscarpetta02@gmail.com>
 
    Scopa is free software: you can redistribute it and/or modify

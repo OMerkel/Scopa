@@ -25,10 +25,15 @@
  *
  */
 
+if (typeof module !== "undefined")
+{
+    ClassicMatch = require("./classic.js").GameClass;
+}
+
 function CirullaMatch() 
 {
     this.name = "Cirulla";
-    this.number_of_players = [2,4];    
+    this.number_of_players = [[2,1],[2,2]];    
     this.victoryPoints = 51;
     
     var classic = new ClassicMatch();
@@ -181,4 +186,12 @@ CirullaMatch.prototype.extraPoints = function(teamSummary)
     
     
     return teamSummary;
+}
+
+//export node.js server module
+if (typeof module !== "undefined")
+{
+    module.exports = {
+        GameClass: CirullaMatch
+    };
 }

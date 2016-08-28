@@ -81,9 +81,12 @@
             </thead>
             <tr>
                 <td>"start"</td>
-                <td><a href="#array">Array</a> of <a href="#player">Player</a> objects</td>
                 <td>
-                    Ask to start a new game with the players specified in the data
+                    <a href="#array">Array</a> of <a href="#array">Array</a> of
+                    <a href="#player">Player</a> objects
+                </td>
+                <td>
+                    Ask to start a new game with the teams specified in the data
                     property
                 </td>
             </tr>
@@ -375,8 +378,11 @@
                 </tr>
                 <tr>
                     <td>number_of_players</td>
-                    <td><a href="#array">Array</a> of <a href="#number">Number</a></td>
-                    <td>List of the allowed number of players</td>
+                    <td>
+                        <a href="#array">Array</a> of <a href="#array">Array</a>
+                        of <a href="#number">Number</a>
+                    </td>
+                    <td>List of pairs of the allowed number of teams and players per team</td>
                 </tr>
                 <tr class="optional">
                     <td>description</td>

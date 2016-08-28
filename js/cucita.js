@@ -25,10 +25,15 @@
  *
  */
 
+if (typeof module !== "undefined")
+{
+    ClassicMatch = require("./classic.js").GameClass;
+}
+
 function CucitaMatch() 
 {
     this.name = "Cucita";
-    this.number_of_players = [2,4];    
+    this.number_of_players = [[2,1],[2,2]];    
     this.victoryPoints = 21;
     
     var classic = new ClassicMatch();
@@ -92,4 +97,12 @@ CucitaMatch.prototype.giveCardsToPlayers = function(response)
         response.cards.push(this.players[i].hand.toObject());
     }
     response.cards.push(this.deck.toObject());
+}
+
+//export node.js server module
+if (typeof module !== "undefined")
+{
+    module.exports = {
+        GameClass: CucitaMatch
+    };
 }

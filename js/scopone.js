@@ -25,10 +25,15 @@
  *
  */
 
+if (typeof module !== "undefined")
+{
+    ClassicMatch = require("./classic.js").GameClass;
+}
+
 function ScoponeMatch() 
 {
     this.name = "Scopone";
-    this.number_of_players = [4];    
+    this.number_of_players = [[2,2]];    
     this.victoryPoints = 11;
     
     this.cardsToPlayers = 10;
@@ -36,3 +41,11 @@ function ScoponeMatch()
 }
 
 ScoponeMatch.prototype = new ClassicMatch();
+
+//export node.js server module
+if (typeof module !== "undefined")
+{
+    module.exports = {
+        GameClass: ScoponeMatch
+    };
+}

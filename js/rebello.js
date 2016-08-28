@@ -25,10 +25,15 @@
  *
  */
 
+if (typeof module !== "undefined")
+{
+    ClassicMatch = require("./classic.js").GameClass;
+}
+
 function ReBelloMatch() 
 {
     this.name = "Re Bello";
-    this.number_of_players = [2, 4];    
+    this.number_of_players = [[2,1],[2,2]];    
     this.victoryPoints = 11;
     this.assignedPoints = ["cards", "primiera", "seven_of_coins", "coins", "re_bello"];
     
@@ -55,4 +60,12 @@ ReBelloMatch.prototype.extraPoints = function(teamSummary)
     teamSummary.partial = teamSummary.scopa;
     
     return teamSummary;
+}
+
+//export node.js server module
+if (typeof module !== "undefined")
+{
+    module.exports = {
+        GameClass: ReBelloMatch
+    };
 }

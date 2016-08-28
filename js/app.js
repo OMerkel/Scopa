@@ -556,12 +556,17 @@ ScopaApplication.prototype.registerGame = function(Game)
 {
     var game = new Game();
     
-    var info = game.send({"command": "info"});
+    var info = game.send({"command": "info"}).infos[0];
+    
+    var number_of_players = [];
+    
+    for (var i=0; i<info.number_of_players.length; i++)
+        number_of_players.push(info.number_of_players[i][0]*info.number_of_players[i][1]);
     
     this.variants.push({
         "class": Game,
         "name": info.name,
-        "number_of_players": info.number_of_players,
+        "number_of_players": number_of_players,
         "description": info.description
     });
     
@@ -732,18 +737,18 @@ ScopaApplication.prototype.onStartGame = function()
     if (number_of_players == 2)
     {
         message = {"command": "start", "data": [
-            {"type": "human", "name": username},
-            {"type": "cpu", "name": "cpu1"},
+            [{"type": "human", "name": username}],
+            [{"type": "cpu", "name": "cpu1"}]
         ]};
         teams = [username, "cpu1"];
     }
     else
     {
         message = {"command": "start", "data": [
-            {"type": "human", "name": username},
-            {"type": "cpu", "name": "cpu2"},
-            {"type": "cpu", "name": "cpu1"},
-            {"type": "cpu", "name": "cpu3"},
+            [{"type": "human", "name": username},
+            {"type": "cpu", "name": "cpu1"}],
+            [{"type": "cpu", "name": "cpu2"},
+            {"type": "cpu", "name": "cpu3"}]
         ]};
         teams = [`${username}, cpu1`, "cpu2, cpu3"];
     }
@@ -1067,10 +1072,10 @@ ScopaApplication.prototype.analyze = function(response)
                         {
                             app.userCanPlay = false;
                             
-                            app.playedCard = card;
+                            app.playedCard = card.id;
                             var newResponse = app.match.send({"command": "human_play", "data": {
                                 player: settings.username,
-                                card: card
+                                card: card.id
                             }});
                             
                             app.analyze(newResponse);

@@ -1,0 +1,337 @@
+<!--
+    Copyright (C) 2016 Marco Scarpetta
+
+    This file is part of Scopa.
+
+    Scopa is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Scopa is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Scopa.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<html>
+
+<head>
+<title>Scopa Online Multiplayer Protocol</title>
+<meta charset="utf-8">
+</head>
+
+<body>
+<style>
+section {
+    background: #eee;
+    border: #333 1px solid;
+    padding: 20px 20px;
+    margin: 10px 10px;
+}
+
+pre {
+    background: #fff;
+    padding: 10px 10px;
+    display: inline-block;
+    border: #333 1px solid;
+}
+</style>
+
+<h1>Scopa Online Multiplayer Protocol</h1>
+
+<p>
+This page contains an example of communication between the server and a client.
+These JSON messages must be exchanged though a WebSocket.
+<p>
+
+<h2>Registration</h2>
+
+<section id="registration-request">
+<h3>client → server</h3>
+<p>New user registration request:</p> 
+
+<pre>
+{
+    "control": "register",
+    "data": {
+        "username": "john",
+        "password": "verystrongpassword"
+    }
+}
+</pre>
+</section>
+
+<section>
+<h3>client ← server</h3>
+<p>Response to a <a href="#registration-request">registration request</a> if the
+desired username is anavailable:</p>
+
+<pre>
+{
+    "control": "username_unavailable",
+    "data": "john"
+}
+</pre>
+
+<p>Response to a <a href="#registration-request">registration request</a> if the
+registration was successful:</p>
+
+<pre>
+{
+    "control": "registered",
+    "data": "john"
+}
+</pre>
+</section>
+
+<h2>Login</h2>
+
+<section id="login-request">
+<h3>client → server</h3>
+<p>Login request:<p>
+
+<pre>
+{
+    "control": "login",
+    "data": {
+        "username": "john",
+        "password": "verystrongpassword"
+    }
+}
+</pre>
+</section>
+
+<section>
+<h3>client ← server</h3>
+
+<p>Response to a <a href="#login-request">login request</a> if the
+given password is wrong:</p>
+<pre>
+{
+    "control": "wrong_password",
+    "data": "john"
+}
+</pre>
+
+<p>Response to a <a href="#login-request">login request</a> if the
+given username does not exists on the server:</p>
+<pre>
+{
+    "control": "unknown_username",
+    "data": "john"
+}
+</pre>
+
+<p>Response to a <a href="#login-request">login request</a> if the
+login is successful:</p>
+<pre>
+{
+    "control": "logged_in",
+    "data": {
+        "username": "john",
+        "games": {
+            "classic_scopa": {"name": "Classic Scopa", "number_of_players": [2,4]},
+            "cirulla": {"name": "Cirulla", "number_of_players": [2,4]}
+        }
+    }
+}
+</pre>
+</section>
+
+<section>
+<h3>client ← server (broadcast)</h3>
+
+<p>List of players registered on the server and their statuses (sent each time a
+player connects or disconnects):</p>
+<pre>
+{
+    "control": "players",
+    "data": [
+        {"username": "john", "status": "available"},
+        {"username": "mark", "status": "busy"},
+        {"username": "mike", "status": "offline"},
+        ...
+    ]
+}
+</pre>
+</section>
+
+<h2>Match negotiation</h2>
+
+<section id="match-request">
+<h3>client → server</h3>
+<p>New match request:<p>
+<pre>
+{
+    "control": "new_match",
+    "data": {
+        "game": "cirulla",
+        "teams": [
+            [
+                {"name": "john", "type": "human"},
+                {"name": "cpu1", "type": "cpu"},
+            ],
+            [
+                {"name": "mike", "type": "human"},
+                {"name": "cpu2", "type": "cpu"},
+            ]
+        ]
+    }
+}
+</pre>
+</section>
+
+<section id="match-proposal">
+<h3>client ← server (to other human players of the match)</h3>
+
+<p>Match proposal to other players:</p>
+<pre>
+{
+    "control": "match_proposal",
+    "data": {
+        "game": "cirulla",
+        "teams": [
+            [
+                {"name": "john", "type": "human"},
+                {"name": "cpu1", "type": "cpu"},
+            ],
+            [
+                {"name": "mike", "type": "human"},
+                {"name": "cpu2", "type": "cpu"},
+            ]
+        ]
+    }
+}
+</pre>
+</section>
+
+<section>
+<h3>client → server</h3>
+
+<p>Affirmative response to a <a href="#match-proposal">match proposal</a>:</p>
+<pre>
+{
+    "control": "match_proposal",
+    "data": "accept"
+}
+</pre>
+
+<p>Negative response to a <a href="#match-proposal">match proposal</a>:</p>
+<pre>
+{
+    "control": "match_proposal",
+    "data": "refuse"
+}
+</pre>
+</section>
+
+<section>
+<h3>client ← server (to all human players of the match)</h3>
+
+<p>The match failed because one player refused to play:</p>
+<pre>
+{
+    "control": "player_refused",
+    "data": "mike"
+}
+</pre>
+
+<p>The match will start after this message:</p>
+<pre>
+{
+    "control": "match_started",
+    "data": null
+}
+</pre>
+</section>
+
+<h2>Match</h2>
+
+<section>
+<h3>client ← server (to all human players of the match)</h3>
+
+<p>Scopa Game Protocol message:</p>
+<pre>
+{
+    "control": "match_data",
+    "data": {...}
+}
+</pre>
+</section>
+
+<section>
+<h3>client → server</h3>
+
+<p>Scopa Game Protocol message:</p>
+<pre>
+{
+    "control": "match_data",
+    "data": {...}
+}
+</pre>
+</section>
+
+<section>
+<h3>client → server</h3>
+
+<p>Chat message:</p>
+<pre>
+{
+    "control": "chat",
+    "data": "Nice move!"
+}
+</pre>
+</section>
+
+<section>
+<h3>client ← server (to all human players of the match)</h3>
+
+<p>Chat message:</p>
+<pre>
+{
+    "control": "chat",
+    "data": {
+        "player": "mike",
+        "message": "Nice move!",
+        "date": "2016-08-27T16:10:24.553Z"
+    }
+}
+</pre>
+</section>
+
+<p>...</p>
+
+<section>
+<h3>client ← server (to all human players of the match)</h3>
+
+<p>Scopa Game Protocol message (match end):</p>
+<pre>
+{
+    "control": "match_data",
+    "data": {
+        "infos": [{"info": "winner", "data": ["john"]}],
+        "moves": [],
+        "cards": []
+    }
+}
+</pre>
+</section>
+
+<section>
+<h3>client ← server (to all human players of the match)</h3>
+
+<p>Match end message:</p>
+<pre>
+{
+    "control": "match_end",
+    "data": null
+}
+</pre>
+</section>
+
+</body>
+</html>

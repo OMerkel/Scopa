@@ -25,10 +25,20 @@
  *
  */
 
+if (typeof module !== "undefined")
+{
+    var scopa_utils = require("./utils.js");
+    combinations = scopa_utils.combinations;
+    Card = scopa_utils.Card;
+    CardsGroup = scopa_utils.CardsGroup;
+    Player = scopa_utils.Player;
+    Response = scopa_utils.Response;
+}
+
 function ClassicMatch() 
 {
     this.name = "Classic Scopa";
-    this.number_of_players = [2,4];
+    this.number_of_players = [[2,1],[2,2]];
     
     this.cardsToPlayers = 3;
     this.cardsToTable = 4;
@@ -64,8 +74,10 @@ function ClassicMatch()
     this._responsesQueue = [];
 }
 
-ClassicMatch.prototype.start = function(players)
+ClassicMatch.prototype.start = function(teams)
 {
+    if (teams.length !== 2) return;
+    
     this._responsesQueue = [];
     response = new Response();
     
@@ -73,55 +85,38 @@ ClassicMatch.prototype.start = function(players)
     
     this._reset = false;
     this.players = [];
+    this.teams = [];
     
-    if (players.length === 2) {
-        this.teams = [
-        {
-            "name": players[0].name,
-            "takenCards": new CardsGroup("deck", "cards_0", [players[0].name]),
-            "points": 0
-        },
-        {
-            "name": players[1].name,
-            "takenCards": new CardsGroup("deck", "cards_1", [players[1].name]),
-            "points": 0
-        }
-        ];
+    for (var i=0; i<teams.length; i++)
+    {
+        var name = teams[i][0].name;
+        var owners = [teams[i][0].name];
         
-        for (var i=0; i<2; i++) {
-            var player = new Player(players[i].name, players[i].type, this.teams[i]);
-            this.players.push(player);
-            player.hand.length = this.cardsToPlayers;
-            cards.push(player.hand.toObject(), this.teams[i].takenCards.toObject());
-            player.hand.length = 0;
+        if (teams[i].length === 2)
+        {
+            name = `${teams[i][0].name}/${teams[i][1].name}`;
+            owners = [teams[i][0].name, teams[i][1].name];
         }
+
+        this.teams.push({
+            "name": teams[i][0].name,
+            "takenCards": new CardsGroup("deck", `cards_${i}`, owners),
+            "points": 0
+        });
+        
+        cards.push(this.teams[i].takenCards.toObject())
     }
     
-    if (players.length === 4) {
-        this.teams = [
+    for (var j=0; j<teams[0].length; j++)
+    {
+        for (var i=0; i<teams.length; i++)
         {
-            "name": players[0].name+"/"+players[2].name,
-            "takenCards": new CardsGroup("deck", "cards_0", [players[0].name, players[2].name]),
-            "points": 0
-        },
-        {
-            "name": players[1].name+"/"+players[3].name,
-            "takenCards": new CardsGroup("deck", "cards_1", [players[1].name, players[3].name]),
-            "points": 0
-        }
-        ];
-        
-        for (var i=0; i<4; i++) {
-            var player = new Player(players[i].name, players[i].type, this.teams[i%2])
+            var player = new Player(teams[i][j].name, teams[i][j].type, this.teams[i]);
             this.players.push(player);
             player.hand.length = this.cardsToPlayers;
             cards.push(player.hand.toObject());
             player.hand.length = 0;
-            
         }
-        cards.push(this.teams[0].takenCards.toObject(),
-            this.teams[1].takenCards.toObject()
-        )
     }
     
     this.deck = new CardsGroup("deck", "main_deck", []);
@@ -172,11 +167,11 @@ ClassicMatch.prototype.giveCardsToPlayers = function(response)
 ClassicMatch.prototype.send = function(message)
 {    
     if (message.command === "info")
-        return {
+        return new Response([{
             "name": this.name,
             "number_of_players": this.number_of_players,
             "description": ""
-        };
+        }]);
     
     if (message.command === "start")
         return this.start(message.data);
@@ -250,7 +245,9 @@ ClassicMatch.prototype.send = function(message)
             this.players[this.currentPlayer].type === "cpu")
             return new Response();
         
-        possibleTakes = this.take(message.data.card, this.tableCards);
+        var card = this.players[this.currentPlayer].hand.getById(message.data.card);
+        console.log(card, message.data.card);
+        var possibleTakes = this.take(card, this.tableCards);
         if (possibleTakes.length == 0) possibleTakes.push([]);
         
         if (possibleTakes.length > 1 && message.data.take === undefined)
@@ -258,7 +255,7 @@ ClassicMatch.prototype.send = function(message)
 
         if (message.data.take === undefined) message.data.take = 0;
         
-        return this.playCard(message.data.card, possibleTakes[message.data.take]);
+        return this.playCard(card, possibleTakes[message.data.take]);
     }
 }
 
@@ -646,4 +643,12 @@ ClassicMatch.prototype.winner = function() {
         return max;
     }
     return -1;
+}
+
+//export node.js server module
+if (typeof module !== "undefined")
+{
+    module.exports = {
+        GameClass: ClassicMatch
+    };
 }

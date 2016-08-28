@@ -221,3 +221,15 @@ function Response(infos=[], moves=[], cards=[])
     this.moves = moves;
     this.cards = cards;
 }
+
+//export node.js server module
+if (typeof module !== "undefined")
+{
+    module.exports = {
+        combinations: combinations,
+        Card: Card,
+        CardsGroup: CardsGroup,
+        Player: Player,
+        Response: Response
+    };
+}
