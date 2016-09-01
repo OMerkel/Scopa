@@ -34,7 +34,7 @@ class LocaleExtractor(HTMLParser):
 
     def handle_data(self, data):
         if (self.current_id):
-            self.extracted[self.current_id] = data
+            self.extracted[self.current_id] = data.lstrip().rstrip()
             self.current_id = None
             
     def handle_endtag(self, tag):
