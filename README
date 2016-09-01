@@ -54,6 +54,19 @@ Then you can run it with the following command:
 
 Or simply run "scopa" if DIR/usr/bin is in your PATH variable.
 
+BUILDING AND RUNNING THE SERVER
+===============================
+
+The online server requires node.js and the ws module (https://github.com/websockets/ws).
+
+To install the server inside the DIR directory run:
+
+  make DESTDIR=DIR server
+
+Then you can run it with the following command:
+
+  node DIR/server.js
+
 LICENSING
 =========
 

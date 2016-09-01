@@ -23,6 +23,10 @@ ifeq ($(MAKECMDGOALS), install-html-only)
 DESTDIR = ./dist
 endif
 
+ifeq ($(MAKECMDGOALS), server)
+DESTDIR = ./server_dist
+endif
+
 # static files
 TEN           = 1 2 3 4 5 6 7 8 9 10
 
@@ -36,7 +40,8 @@ ALL_CARDS     = $(addprefix Napoletane/, $(CARDS_FILES)) \
                 $(addprefix Bergamasche/, $(CARDS_FILES))
 
 DATA_DIR      = $(addprefix data/cards/, $(ALL_CARDS)) \
-                $(addprefix data/, close.svg menu.svg icon.svg icon.png) \
+                $(addprefix data/, close.svg menu.svg icon.svg icon.png \
+                available.svg busy.svg offline.svg) \
                 $(addprefix data/backgrounds/, red.png green.png blue.png)
 
 LOCALES       = it
@@ -44,15 +49,20 @@ LOCALES_FILES = $(addprefix locales/, $(addsuffix .js, $(LOCALES)))
 LOCALES_JSON  = $(addprefix locales_json/, $(addsuffix .json, $(LOCALES)))
 
 ALL_FILES     = $(DATA_DIR) index.html style.css \
-                $(addprefix docs/, index.html style.css game-class.html) \
+                $(addprefix docs/, index.html style.css game-class.html \
+                online-multiplayer-protocol.html) \
                 $(addprefix js/, app.js utils.js classic.js scopone.js cucita.js \
-                                 cirulla.js rebello.js) \
+                                 cirulla.js rebello.js online.js) \
                 $(LOCALES_FILES)
 
 STATIC_FILES  = $(addprefix build/share/scopa/, $(ALL_FILES))
 
 SRC           = $(addprefix qt-application/, main.cpp mainwindow.cpp mainwindow.h \
                                              webenginepage.cpp webenginepage.h)
+
+SERVER_FILES  = $(addprefix server/, server.js settings.js) \
+                $(addprefix js/, utils.js classic.js cirulla.js cucita.js \
+                scopone.js rebello.js)
 
 .PHONY: all
 all: build/bin/scopa $(STATIC_FILES)
@@ -104,6 +114,22 @@ install: all scopa.desktop
 install-html-only: $(STATIC_FILES)
 	mkdir -p $(DESTDIR)
 	cp -r build/share/scopa/* $(DESTDIR)/
+
+.PHONY: server
+server: $(SERVER_FILES)
+	mkdir -p $(DESTDIR)/js
+	cp server/server.js $(DESTDIR)/
+	cp js/utils.js $(DESTDIR)/js/
+	cp js/classic.js $(DESTDIR)/js/
+	cp js/cirulla.js $(DESTDIR)/js/
+	cp js/cucita.js $(DESTDIR)/js/
+	cp js/scopone.js $(DESTDIR)/js/
+	cp js/rebello.js $(DESTDIR)/js/
+	
+	if [ -e $(DESTDIR)/settings.js ]; then \
+	cp server/settings.js $(DESTDIR)/settings.js.update; \
+	else cp server/settings.js $(DESTDIR)/; \
+	fi
 
 .PHONY: tests
 tests: tests.html

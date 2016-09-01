@@ -33,7 +33,7 @@ var games = {
 var gameClasses = {};
 for (var key in games)
 {
-    gameClasses[key] = require(`../js/${key}.js`).GameClass;
+    gameClasses[key] = require(`./js/${key}.js`).GameClass;
     var match = new gameClasses[key]();
     var info = match.send({"command": "info"}).infos[0];
     
