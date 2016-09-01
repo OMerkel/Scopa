@@ -21,6 +21,7 @@ var ws = require('ws');
 var fs = require('fs');
 var crypto = require('crypto');
 var settings = require("./settings.js");
+var http = require('http');
 
 //loading games informations and classes
 var games = {
@@ -43,7 +44,8 @@ for (var key in games)
     };
 }
 
-var wss = new ws.Server({ port: 8080 });
+var server = http.createServer();
+var wss = new ws.Server({ server: server });
 
 var players = {};
 var sockets = {};
@@ -422,3 +424,5 @@ wss.on('connection', function (socket) {
         onConnectionClose(socket);
     });
 });
+
+server.listen(settings.port, settings.host);
