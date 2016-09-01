@@ -91,7 +91,11 @@ CucitaMatch.prototype.giveCardsToPlayers = function(response)
         else
             this.players[i].hand.covered = true;
         
-        if (this.players[i].hand.covered && this.players[i].type == "cpu") move = this.hideCards(move);
+        if (!this.players[i].hand.covered)
+        {
+            move.visible = true;
+            move.visible_to = undefined;
+        }
         
         response.moves.push(move);        
         response.cards.push(this.players[i].hand.toObject());

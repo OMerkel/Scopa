@@ -134,17 +134,6 @@ ClassicMatch.prototype.start = function(teams)
     return response;
 }
 
-ClassicMatch.prototype.hideCards = function(move)
-{
-    for (var i=0; i<move.cards.length; i++)
-    {
-        move.cards[i].value = 0;
-        move.cards[i].suit  = 0;
-    }
-    
-    return move;
-}
-
 ClassicMatch.prototype.nextPlayer = function()
 {
     return (this.currentPlayer+1 >= this.players.length) ? 0 : this.currentPlayer+1;
@@ -155,8 +144,6 @@ ClassicMatch.prototype.giveCardsToPlayers = function(response)
     for (var i=0; i<this.players.length; i++)
     {
         var move = this.deck.move(this.players[i].hand, this.cardsToPlayers);
-        
-        if (i != 0) move = this.hideCards(move);
         
         response.moves.push(move);        
         response.cards.push(this.players[i].hand.toObject());
@@ -241,7 +228,7 @@ ClassicMatch.prototype.send = function(message)
     
     if (message.command === "human_play")
     {        
-        if (message.data.player != this.players[this.currentPlayer].name ||
+        if (message.data.player !== this.players[this.currentPlayer].name ||
             this.players[this.currentPlayer].type === "cpu")
             return new Response();
         
@@ -251,7 +238,13 @@ ClassicMatch.prototype.send = function(message)
         if (possibleTakes.length == 0) possibleTakes.push([]);
         
         if (possibleTakes.length > 1 && message.data.take === undefined)
-            return new Response([{info: "choice", data: possibleTakes}]);
+            return new Response([{
+                info: "choice",
+                data: {
+                    player: this.players[this.currentPlayer].name,
+                    takes: possibleTakes
+                }
+            }]);
 
         if (message.data.take === undefined) message.data.take = 0;
         

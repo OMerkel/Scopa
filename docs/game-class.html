@@ -162,7 +162,7 @@
                     <td>take</td>
                     <td><a href="#number">Number</a></td>
                     <td>The index of the cards to take. <i>take</i> property is optional: if
-                        there is more than one possible take, a <a href="#choice">choice</a>
+                        there is more than one possible take, a <a href="#choice_info">choice</a>
                         info is returned inside the <a href="#response">Response</a> object.</td>
                 </tr>
             </table>
@@ -263,8 +263,8 @@
                     <td>Match summary</td>
                 </tr>
                 <tr>
-                    <td id="choice">"choice"</td>
-                    <td><a href="#array">Array</a> of <a href="#array">Array</a> of <a href="#card">Card</a> objects</td>
+                    <td id="choice_info">"choice"</td>
+                    <td><a href="#choice">Choice</a></td>
                     <td>List of possible takes</td>
                 </tr>
                 <tr>
@@ -356,6 +356,30 @@
                     <td>partial</td>
                     <td><a href="#number">Number</a></td>
                     <td>Total points of the game</td>
+                </tr>
+            </table>
+        </div>
+        
+        <h4 id="choice">Choice</h4>
+        
+        <div>
+            <p>An <a href="#object">Object</a> with these properties:</p>
+                
+            <table class="properties">
+                <thead>
+                    <td>Property name</td>
+                    <td>Type</td>
+                    <td>Value</td>
+                </thead>
+                <tr>
+                    <td>player</td>
+                    <td><a href="#string">String</a></td>
+                    <td>The name of the player who have to choose which cards take</td>
+                </tr>
+                <tr>
+                    <td>takes</td>
+                    <td><a href="#array">Array</a> of <a href="#array">Array</a> of <a href="#card">Card</a> objects</td>
+                    <td>List of possible takes</td>
                 </tr>
             </table>
         </div>
@@ -468,10 +492,20 @@
                     <td><a href="#array">Array</a> of <a href="#card">Card</a> objects</td>
                     <td>List of the cards to be moved</td>
                 </tr>
+                <tr>
+                    <td>visible</td>
+                    <td><a href="#boolean">Boolean</a></td>
+                    <td>Indicate whether tha cards are visible to all players or not</td>
+                </tr>
                 <tr class="optional">
                     <td>move_on</td>
                     <td><a href="#card">Card</a></td>
                     <td>Card of the destination group where move <i>cards</i> on</td>
+                </tr>
+                <tr class="optional">
+                    <td>visible_to</td>
+                    <td><a href="#string">String</a></td>
+                    <td>The name of the only player who can see this cards, valid only if <i>visible</i> is <i>false</i></td>
                 </tr>
             </table>
         </div>

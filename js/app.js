@@ -156,8 +156,13 @@ GraphicsManager = function(cardsType)
     else this.setCardsType("Napoletane")
 }
 
-GraphicsManager.prototype.updateCardImg = function(img, card)
+GraphicsManager.prototype.updateCardImg = function(img, card, hide)
 {
+    if (hide)
+    {
+        card.suit = 0;
+        card.value = 0;
+    }
     img.dataset.card = `${card.value}${this.suits[card.suit]}`;
     if (card.new_value) img.dataset.new_value = card.new_value;
     
@@ -411,6 +416,13 @@ ScopaApplication = function()
     this.variants = [];
     this.match = null;
     
+    this.matchTeams = null;
+    this.localPlayer = null;
+    
+    this.onlineMatch = new OnlineMatch();
+    this.onlineGames = null;
+    this.onlineUsername = null;
+    
     this.graphicsManager = new GraphicsManager(settings.cards);
     
     this.resizeLock = false;
@@ -477,11 +489,47 @@ ScopaApplication = function()
     var items = document.querySelectorAll("#menu > label");
     for (var i=0; i<items.length; i++)
     {
-        items[i].addEventListener("click", function(event) {
-            app.showDialog(event.target.dataset.dialog);
-            menu.hidden = true;
-        });
+        if (items[i].dataset.dialog)
+        {
+            items[i].addEventListener("click", function(event) {
+                app.showDialog(event.target.dataset.dialog);
+                menu.hidden = true;
+            });
+        }
     }
+    
+    document.querySelector("#new-game-item").addEventListener("click", function(event) {
+        menu.hidden = true;
+        if (app.onlineMatch.status === "playing")
+        {
+                app.showDialog("finish-online-match");
+                return;
+        }
+        app.showDialog("new-game");
+    });
+    
+    document.querySelector("#online-item").addEventListener("click", function(event) {
+        menu.hidden = true;
+        switch (app.onlineMatch.status)
+        {
+            case "closed":
+                document.querySelector("#connect-info").style.display = "none";
+                app.showDialog("connect");
+                break;
+            case "connected":
+                document.querySelector("#login-register-info").style.display = "none";
+                app.showDialog("login-register");
+                break;
+            case "logged_in":
+                app.showDialog("new-online-match");
+                break;
+            case "playing":
+                app.showDialog("finish-online-match");
+                break;
+            default:
+                break;
+        }
+    });
     
     //dialogs' close buttons
     var buttons = document.querySelectorAll(".close");
@@ -524,12 +572,9 @@ ScopaApplication = function()
         });
     }
     
+    //buttons
     document.querySelector("#start-game").addEventListener("click", function() {
         app.onStartGame();
-    });
-    
-    window.addEventListener("resize", function() {
-        app.onResize();
     });
     
     document.querySelector("#continue").addEventListener("click", function() {
@@ -547,6 +592,278 @@ ScopaApplication = function()
         }
         
         app.showDialog("new-game");
+    });
+    
+    //online match UI
+    this.onlineMatch.onconnection = function() {
+        document.querySelector("#login-register-info").style.display = "none";
+        document.querySelector("#server_name").textContent = document.querySelector("#server").value;
+        app.showDialog("login-register");
+    }
+    
+    this.onlineMatch.onconnectionfail = function() {
+        var label = document.querySelector("#connect-info");
+        label.textContent = app.getLocaleString("connection_error");
+        label.className = "error";
+        label.style.display = "";
+    }
+    
+    this.onlineMatch.onconnectionclose = function() {
+        app.showDialog("connection-lost");
+    }
+    
+    this.onlineMatch.onregister = function(username) {
+        var label = document.querySelector("#login-register-info");
+        label.textContent = app.getLocaleString("registered").format(username);
+        label.className = "success";
+        label.style.display = "";
+    }
+    
+    this.onlineMatch.onregisterfail = function(username) {
+        var label = document.querySelector("#login-register-info");
+        label.textContent = app.getLocaleString("unavailable_username").format(username);
+        label.className = "error";
+        label.style.display = "";
+    }
+    
+    this.onlineMatch.onloginfail = function(cause, username) {
+        var label = document.querySelector("#login-register-info");
+        label.textContent = app.getLocaleString(cause).format(username);
+        label.className = "error";
+        label.style.display = "";
+    }
+    
+    this.onlineMatch.onlogin = function(data) {
+        var gamesSelect = document.querySelector("#online-game");
+        
+        while (gamesSelect.firstChild)
+            gamesSelect.removeChild(gamesSelect.firstChild);
+        
+        for (key in data.games)
+        {
+            var option = document.createElement("option");
+            option.value = key;
+            option.textContent = data.games[key].name;
+            gamesSelect.appendChild(option);
+        }
+        
+        app.onlineUsername = data.username;
+        app.onlineGames = data.games;
+        
+        app.showDialog("new-online-match");
+    }
+    
+    this.onlineMatch.onplayerslistupdate = function(list) {
+        var playersSelect = document.querySelector("#players");
+        
+        while (playersSelect.firstChild)
+            playersSelect.removeChild(playersSelect.firstChild);
+        
+        for (var i=0; i<list.length; i++)
+        {
+            var option = document.createElement("option");
+            option.value = list[i].username;
+            option.textContent = list[i].username;
+            option.className = list[i].status;
+            playersSelect.appendChild(option);
+        }
+    }
+    
+    this.onlineMatch.onmatchproposal = function(data) {
+        app.matchTeams = data.teams;
+        
+        document.querySelector("#proposal").textContent = app.getLocaleString("match-proposal").format(
+            app.onlineGames[data.game].name);
+        
+        var teamsText = "";
+        for (var i=0; i<data.teams.length; i++)
+        {
+            teamsText += `<b>${app.getLocaleString("team")} ${i}:</b><br>`;
+            for (var j=0; j<data.teams[i].length; j++)
+                teamsText += `${data.teams[i][j].name} (${data.teams[i][j].type})<br>`;
+            teamsText += "<br>";
+        }
+        
+        document.querySelector("#proposal-teams").innerHTML = teamsText;
+        
+        app.showDialog("match-proposal");
+    }
+    
+    this.onlineMatch.onmatchfail = function() {
+        app.showDialog("match-fail");
+    }
+    
+    this.onlineMatch.onmatchstart = function() {
+        app.localPlayer = app.onlineUsername;
+        app.match = app.onlineMatch;
+        app.analyze(app.match.send({command: "next"}));
+    }
+    
+    this.onlineMatch.onmatchend = function() {
+        app.clearMatch();
+        app.showDialog("online-match-end");
+    }
+    
+    this.onlineMatch.onmsgavailable = function() {
+        app.analyze(app.match.send({command: "next"}));
+    }
+    
+    document.querySelector("#connect-btn").addEventListener("click", function() {
+        var server = document.querySelector("#server").value;
+        
+        app.onlineMatch.connect(server);
+    });
+    
+    document.querySelector("#register-btn").addEventListener("click", function() {
+        var username = document.querySelector("#online_username").value;
+        var password = document.querySelector("#password").value;
+        app.onlineMatch.sendToServer({
+            control: "register",
+            data: {
+                username: username,
+                password: password
+            }
+        });
+    });
+    
+    document.querySelector("#login-btn").addEventListener("click", function() {
+        var username = document.querySelector("#online_username").value;
+        var password = document.querySelector("#password").value;
+        app.onlineMatch.sendToServer({
+            control: "login",
+            data: {
+                username: username,
+                password: password
+            }
+        });
+    });
+    
+    var clearTeam = function(evt) {
+        var team = evt.target.id[evt.target.id.length-1];
+        var teamDiv = document.querySelector(`#team${team}`);
+        while (teamDiv.firstChild)
+            teamDiv.removeChild(teamDiv.firstChild);
+    }
+    
+    var addPlayer = function(evt) {
+        var player = document.querySelector("#players").selectedOptions[0];
+        if (player.className !== "available")
+            return;
+        
+        for (var i=1; i<3; i++)
+        {
+            var teamDiv = document.querySelector(`#team${i}`);
+            for (var j=0; j<teamDiv.children.length; j++)
+                if (teamDiv.children[j].textContent === player.value)
+                    return;
+        }
+        
+        var team = evt.target.id[evt.target.id.length-1];
+        var teamDiv = document.querySelector(`#team${team}`);
+        
+        var label = document.createElement("label");
+        label.textContent = player.value;
+        teamDiv.appendChild(label);
+    }
+    
+    var addCpu = function(evt) {
+        var team = evt.target.id[evt.target.id.length-1];
+        var teamDiv = document.querySelector(`#team${team}`);
+        
+        var label = document.createElement("label");
+        label.textContent = "cpu";
+        label.dataset.cpu = "true";
+        teamDiv.appendChild(label);
+    }
+    
+    document.querySelector("#add-selected1").addEventListener("click", addPlayer);
+    document.querySelector("#add-cpu-team1").addEventListener("click", addCpu);
+    document.querySelector("#clear-team1").addEventListener("click", clearTeam);
+    document.querySelector("#add-selected2").addEventListener("click", addPlayer);
+    document.querySelector("#add-cpu-team2").addEventListener("click", addCpu);
+    document.querySelector("#clear-team2").addEventListener("click", clearTeam);
+    
+    document.querySelector("#send-request").addEventListener("click", function() {
+        var teamsDiv = [
+            document.querySelector("#team1"),
+            document.querySelector("#team2")
+        ];
+        var game = document.querySelector("#online-game").selectedOptions[0].value;
+        var numberOfPlayers = {};
+        for (var i=0; i<app.onlineGames[game].number_of_players.length; i++)
+            numberOfPlayers[app.onlineGames[game].number_of_players[i][1]] = "yes";
+        
+        if (teamsDiv[0].children.length === teamsDiv[1].children.length &&
+            teamsDiv[0].children.length in numberOfPlayers)
+        {
+            var teams = [];
+            var cpus = 0;
+            
+            for (var i=0; i<teamsDiv.length; i++)
+            {
+                teams.push([]);
+                for (var j=0; j<teamsDiv[i].children.length; j++)
+                {
+                    if (teamsDiv[i].children[j].dataset.cpu)
+                    {
+                        cpus += 1;
+                        teams[i].push({
+                            name: `cpu${cpus}`,
+                            type: "cpu"
+                        });
+                    }
+                    else
+                    {
+                        teams[i].push({
+                            name: teamsDiv[i].children[j].textContent,
+                            type: "human"
+                        });
+                    }
+                }
+            }
+            
+            //human players must be at least 2
+            if (cpus <= teams[0].length*2-2)
+            {
+                app.onlineMatch.sendToServer({
+                    control: "new_match",
+                    data: {
+                        game: game,
+                        teams: teams
+                    }
+                });
+                app.matchTeams = teams;
+                document.querySelector("#new-online-match").hidden = true;
+                return;
+            }
+        }
+        
+        var label = document.querySelector("#online-match-error");
+        label.textContent = app.getLocaleString("wrong_teams");
+        label.style.display = "";
+    });
+    
+    document.querySelector("#accept-btn").addEventListener("click", function() {
+        document.querySelector("#match-proposal").hidden = true;
+        
+        app.onlineMatch.sendToServer({
+            control: "match_proposal",
+            data: "accept"
+        });
+    });
+    
+    document.querySelector("#refuse-btn").addEventListener("click", function() {
+        document.querySelector("#match-proposal").hidden = true;
+        
+        app.onlineMatch.sendToServer({
+            control: "match_proposal",
+            data: "refuse"
+        });
+    });
+    
+    //window resize event
+    window.addEventListener("resize", function() {
+        app.onResize();
     });
     
     this.onResize();
@@ -709,7 +1026,7 @@ ScopaApplication.prototype.onResize = function(e)
         this.resizeRequested = true;
 }
 
-ScopaApplication.prototype.onStartGame = function()
+ScopaApplication.prototype.clearMatch = function()
 {
     var fixedCards = document.querySelectorAll(".fixedCard, .fixedDeck");
     
@@ -725,6 +1042,13 @@ ScopaApplication.prototype.onStartGame = function()
         used[i].dataset.used = 0;
     }
     
+    this.match = null;
+}
+
+ScopaApplication.prototype.onStartGame = function()
+{
+    this.clearMatch();
+    
     var number_of_players = document.querySelector("#numberOfPlayers").selectedOptions[0].id.replace("numberOfPlayers-","");
     var variant = this.variants[document.querySelector("#variant").selectedOptions[0].dataset.index];
     var username = document.getElementById("userName").value;
@@ -736,23 +1060,29 @@ ScopaApplication.prototype.onStartGame = function()
     
     if (number_of_players == 2)
     {
-        message = {"command": "start", "data": [
-            [{"type": "human", "name": username}],
-            [{"type": "cpu", "name": "cpu1"}]
-        ]};
+        message = {
+            command: "start",
+            data: [
+                [{type: "human", name: username}],
+                [{type: "cpu", name: "cpu1"}]
+            ]
+        };
         teams = [username, "cpu1"];
     }
     else
     {
-        message = {"command": "start", "data": [
-            [{"type": "human", "name": username},
-            {"type": "cpu", "name": "cpu1"}],
-            [{"type": "cpu", "name": "cpu2"},
-            {"type": "cpu", "name": "cpu3"}]
-        ]};
+        message = {
+            command: "start",
+            data: [
+                [{type: "human", name: username}, {type: "cpu", name: "cpu1"}],
+                [{type: "cpu", name: "cpu2"}, {type: "cpu", name: "cpu3"}]
+            ]
+        };
         teams = [`${username}, cpu1`, "cpu2, cpu3"];
     }
     
+    this.matchTeams = message.data;
+    this.localPlayer = settings.username;
     var response = this.match.send(message);
     
     settings.number_of_players = number_of_players;
@@ -811,48 +1141,60 @@ ScopaApplication.prototype.getOffset = function(selector)
 
 ScopaApplication.prototype.initTable = function(cards)
 {
-    for (var i=0; i<cards.length; i++)
+    var players = [];
+    for (var j in this.matchTeams[0])
+        for (var i in this.matchTeams)
+            players.push(this.matchTeams[i][j]);
+
+    var n = 0;
+    while (!(players[n].name === this.localPlayer))
+        n += 1;
+    
+    //shift players list to have local player at position 0
+    players.push.apply(players, players.splice(0,n))
+    
+    var positions;
+    if (players.length === 2)
+        positions = [0, 2];
+    else if (players.length === 4)
+        positions = [0, 1, 2, 3];
+    
+    var orientations = ["h", "v", "h", "v"];
+    
+    var div;
+    for (var i in cards)
     {
-        var div;
+        if (cards[i].type === "hand")
+            for (var j in players)
+                if (players[j].name === cards[i].owners[0])
+                {
+                    div = document.querySelector(`#hand_${positions[j]}`);
+                    
+                    while (div.firstChild) div.removeChild(div.firstChild);
+                    
+                    for (var k=0; k<cards[i].length; k++)
+                    {
+                        var placeHolder = document.createElement("div");
+                        placeHolder.id = `${cards[i].owners[0]}_card_${k}`;
+                        placeHolder.className = `c${orientations[positions[j]]}${cards[i].length}`;
+                        div.appendChild(placeHolder);
+                        if (orientations[positions[j]] === "v" && k !== cards[i].length-1)
+                            div.appendChild(document.createElement("br"));
+                    }
+                    div.lastChild.className = "card";
+                }
+
+
         if (cards[i].type === "deck")
         {
             if (cards[i].owners.length === 0)
                 div = document.querySelector("#mainDeck");
             
-            else if (cards[i].owners.indexOf(settings.username) > -1)
+            else if (cards[i].owners.indexOf(this.localPlayer) > -1)
                 div = document.querySelector("#team0Deck");
             
             else
                 div = document.querySelector("#team1Deck");
-        }
-        
-        if (cards[i].type === "hand")
-        {
-            var orientation = "v";
-            if (cards[i].owners[0] === settings.username)
-            {
-                div = document.querySelector("#humanCards");
-                orientation = "h";
-            }
-            
-            else
-                div = document.querySelector(`#${cards[i].owners[0]}Cards`);
-            
-            if (cards[i].owners[0] == "cpu1")
-                orientation = "h"
-            
-            while (div.firstChild) div.removeChild(div.firstChild);
-            
-            for (var j=0; j<cards[i].length; j++)
-            {
-                var placeHolder = document.createElement("div");
-                placeHolder.id = `${cards[i].owners[0]}card_${j}`;
-                placeHolder.className = `c${orientation}${cards[i].length}`
-                div.appendChild(placeHolder);
-                if (orientation == "v" && j != cards[i].length-1)
-                    div.appendChild(document.createElement("br"));
-            }
-            div.lastChild.className = "card";
         }
         
         if (cards[i].type === "table")
@@ -888,9 +1230,11 @@ ScopaApplication.prototype.updateCards = function(cards)
 
 ScopaApplication.prototype.analyze = function(response)
 {
-    //console.log(response);
+    //console.log("response:", response);
     if (response.moves.length === 0 && response.cards.length === 0 && response.infos.length === 0)
         return;
+    
+    if (!this.match) return;
     
     var movesLog = document.querySelector("#moves-log");
     var messagesLog = document.querySelector("#messages-log");
@@ -933,20 +1277,20 @@ ScopaApplication.prototype.analyze = function(response)
             this.displayMessage(response.infos[i].info, string);
         }
         
-        if (response.infos[i].info === "waiting")
+        if (response.infos[i].info === "waiting" && response.infos[i].data === this.localPlayer)
         {
             this.userCanPlay = true;
             return;
         }
         
-        if (response.infos[i].info === "choice")
+        if (response.infos[i].info === "choice" && response.infos[i].data.player === this.localPlayer)
         {
             this.userCanPlay = true;
             var choices = document.querySelector("#choices");
             
             while (choices.firstChild) choices.removeChild(choices.firstChild);
             
-            var takes = response.infos[i].data;
+            var takes = response.infos[i].data.takes;
             for (var j=0; j<takes.length; j++)
             {
                 var div = document.createElement("div");
@@ -963,7 +1307,7 @@ ScopaApplication.prototype.analyze = function(response)
                         document.querySelector("#move-choice").hidden = true;
                         
                         var newResponse = app.match.send({"command": "human_play", "data": {
-                            player: settings.username,
+                            player: app.localPlayer,
                             card: app.playedCard,
                             take: index
                         }});
@@ -1038,7 +1382,7 @@ ScopaApplication.prototype.analyze = function(response)
         var dest = document.querySelector(`*[data-id='${response.moves[i].dest}']`);
         
         //update chronology
-        if (source.id === "humanCards")
+        if (source.id === "hand_0")
         {
             movesLog.innerHTML = "";
         }
@@ -1054,6 +1398,7 @@ ScopaApplication.prototype.analyze = function(response)
         {
             var card = response.moves[i].cards[j];
             var cardImg;
+            var hideCard =  !(response.moves[i].visible || response.moves[i].visible_to === this.localPlayer);
             
             if (source.id === "mainDeck")
             {
@@ -1063,9 +1408,9 @@ ScopaApplication.prototype.analyze = function(response)
                 document.body.appendChild(cardImg);
                 offset = this.getOffset("#mainDeck");
                 cardImg.style.transform = `translate(${offset.left}px, ${offset.top}px)`;
-                this.graphicsManager.updateCardImg(cardImg, card);
+                this.graphicsManager.updateCardImg(cardImg, card, hideCard);
                 
-                if (dest.id === "humanCards")
+                if (dest.id === "hand_0")
                 {
                     cardImg.addEventListener("click", (function(app, card){return function(){
                         if (app.userCanPlay)
@@ -1074,7 +1419,7 @@ ScopaApplication.prototype.analyze = function(response)
                             
                             app.playedCard = card.id;
                             var newResponse = app.match.send({"command": "human_play", "data": {
-                                player: settings.username,
+                                player: app.localPlayer,
                                 card: card.id
                             }});
                             
@@ -1089,10 +1434,8 @@ ScopaApplication.prototype.analyze = function(response)
                 document.getElementById(cardImg.dataset.placeHolder).dataset.used = 0;
                 
                 //show the card when cpu plays it
-                if (source.id != "humanCards" && source.id != "tableCards")
-                {
-                    this.graphicsManager.updateCardImg(cardImg, card);
-                }
+                if (source.id != "hand_0" && source.id != "tableCards")
+                    this.graphicsManager.updateCardImg(cardImg, card, hideCard);
                 
                 //delete card after it is taken from a player
                 if (source.id === "tableCards")
@@ -1102,9 +1445,8 @@ ScopaApplication.prototype.analyze = function(response)
                 
                 //update chronology
                 var img = document.createElement("img");
-                this.graphicsManager.updateCardImg(img, card);
+                this.graphicsManager.updateCardImg(img, card, hideCard);
                 movesLog.appendChild(img);
-                
             }
             
             var placeHolders  = dest.querySelectorAll("div");

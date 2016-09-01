@@ -166,6 +166,10 @@ div, table, td, tr, body {
     z-index: 100;
 }
 
+.modal {
+    z-index: 120;
+}
+
 .window {
     max-height: calc(0.9 * var(--h));
     max-width: calc(var(--w) - 0.1 * var(--h));
@@ -203,6 +207,61 @@ div, table, td, tr, body {
 
 .content > * {
     margin: 10px;
+}
+
+/*login-register window*/
+#server_name {
+    font-weight: bold;
+    margin: 0px 0px;
+    padding: 0px 0px;
+}
+
+.error {
+    border: 2px solid red;
+    padding: 10px 10px;
+    display: block;
+}
+
+.success {
+    border: 2px solid green;
+    padding: 10px 10px;
+    display: block;
+}
+
+/*new-online-match window*/
+#team1 > label, #team2 > label {
+    display: block;
+    padding: 5px 5px;
+    border-left: 5px solid #3DAEE9;
+    margin: 5px 0px;
+}
+
+label[data-cpu='true'] {
+    border-left: 5px solid red;
+}
+
+#team1, #team2 {
+    border: 1px solid #444;
+    padding: 5px 5px;
+    margin: 10px 0px;
+}
+
+.available {
+    background-image:url(data/available.svg);
+}
+
+.busy {
+    background-image:url(data/busy.svg);
+}
+
+.offline {
+    background-image:url(data/offline.svg);
+}
+
+#players > option {
+    height: 30px;
+    background-repeat: no-repeat;
+    text-indent: 30px;
 }
 
 /*help window*/

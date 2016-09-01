@@ -147,9 +147,11 @@ CardsGroup.prototype.mix = function()
 CardsGroup.prototype.move = function(dest, arg)
 {
     var move = {
-        "source": this.id,
-        "dest": dest.id,
-        "cards": []
+        source: this.id,
+        dest: dest.id,
+        cards: [],
+        visible: !(dest.type === "hand"),
+        visible_to: (dest.type === "hand") ? dest.owners[0] : undefined
     };
     if (typeof arg === "number")
     {

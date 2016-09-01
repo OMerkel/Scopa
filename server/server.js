@@ -17,7 +17,7 @@
  *                                                                                                                                                                      
  */
 
-var WebSocketServer = require('ws').Server;
+var ws = require('ws');
 var fs = require('fs');
 var crypto = require('crypto');
 var settings = require("./settings.js");
@@ -43,7 +43,7 @@ for (var key in games)
     };
 }
 
-var wss = new WebSocketServer({ port: 8080 });
+var wss = new ws.Server({ port: 8080 });
 
 var players = {};
 var sockets = {};
@@ -124,13 +124,31 @@ function broadcastPlayersList()
 //sends match_data messages to sockets
 function sendMatchData(match_data, skts)
 {
-    var msg = {
+    var msg = JSON.stringify({
         control: "match_data",
         data: match_data
-    };
+    });
     
     for (var i=0; i<skts.length; i++)
-        skts[i].send(JSON.stringify(msg));
+    {
+        if (match_data.moves.length > 0)
+        {
+            var player = playerFromSocket(skts[i]);
+            var hiddenMsg = JSON.parse(msg);
+            for (var j in hiddenMsg.data.moves)
+                //hide cards for other players
+                if (!(hiddenMsg.data.moves[j].visible ||
+                    hiddenMsg.data.moves[j].visible_to === player))
+                    for (var k in hiddenMsg.data.moves[j].cards)
+                    {
+                        hiddenMsg.data.moves[j].cards[k].suit = 0;
+                        hiddenMsg.data.moves[j].cards[k].value = 0;
+                    }
+            skts[i].send(JSON.stringify(hiddenMsg));
+        }
+        else
+            skts[i].send(msg);
+    }
         
 }
 
@@ -154,7 +172,7 @@ function matchNext(i)
                     data: null
                 }));
                 
-                players[playerFromSocket(matches[i].sockets[j])].status = "available";
+                sockets[playerFromSocket(matches[i].sockets[j])].status = "available";
             }
             
             matches[i] = undefined;
@@ -231,44 +249,10 @@ function analyzeMessage(socket, message)
         return;
     }
     
-    if (msg.control === "close")
-    {
-        var player = playerFromSocket(socket);
-        
-        if (player)
-        {
-            sockets[player] = {
-                socket: null,
-                status: "offline"
-            };
-            broadcastPlayersList();
-        }
-        
-        //end and delete match of socket and make other players available
-        var i = matchIndexFromSocket(socket);
-        if (i)
-        {
-            for (var j=0; j<matches[i].sockets.length; j++)
-            {
-                if (matches[i].sockets[j] !== socket)
-                {
-                    matches[i].sockets[j].send(JSON.stringify({
-                        control: "match_end",
-                        data: null
-                    }));
-                    
-                    players[playerFromSocket(matches[i].sockets[j])].status = "available";
-                }
-            }
-        }
-        
-        return;
-    }
-    
     if (msg.control === "new_match")
     {
         var issuer = playerFromSocket(socket);
-        players[issuer].status = "busy";
+        sockets[issuer].status = "busy";
         
         //check if the desired players are available
         var availableSockets = [];
@@ -278,16 +262,16 @@ function analyzeMessage(socket, message)
             {
                 if (msg.data.teams[i][j].type === "human")
                 {
-                    if (sockets[msg.data.teams[i][j].name].status === "available")
+                    if (msg.data.teams[i][j].name !== issuer)
                     {
-                        if (msg.data.teams[i][j].name !== issuer)
+                        if (sockets[msg.data.teams[i][j].name].status === "available")
                             availableSockets.push(sockets[msg.data.teams[i][j].name].socket);
-                    }
-                    else
-                    {
-                        //if one player is not available the match negotiation fails
-                        socket.send(JSON.stringify({control: "player_refused", data: msg.data.teams[i][j].name}));
-                        return;
+                        else
+                            {
+                                //if one player is not available the match negotiation fails
+                                socket.send(JSON.stringify({control: "player_refused", data: msg.data.teams[i][j].name}));
+                                return;
+                            }
                     }
                 }
             }
@@ -301,7 +285,7 @@ function analyzeMessage(socket, message)
                 data: msg.data
             }));
             
-            players[playerFromSocket(availableSockets[i])].status = "busy";
+            sockets[playerFromSocket(availableSockets[i])].status = "busy";
         }
         
         broadcastPlayersList();
@@ -352,11 +336,11 @@ function analyzeMessage(socket, message)
         {
             sendingMsg = JSON.stringify({
                 control: "player_refused",
-                data: playersFromSocket(socket)
+                data: playerFromSocket(socket)
             });
             for (var j=0; j<matches[i].sockets.length; j++)
             {
-                players[playerFromSocket(matches[i].sockets[j])].status = "available";
+                sockets[playerFromSocket(matches[i].sockets[j])].status = "available";
                 if (matches[i].sockets[j] !== socket)
                     matches[i].sockets[j].send(sendingMsg);
             }
@@ -395,11 +379,46 @@ function analyzeMessage(socket, message)
     }
 }
 
-wss.on('connection', function (ws) {
-    ws.on('message', function (message) {
-        analyzeMessage(ws, message);
+function onConnectionClose(socket)
+{
+    //end and delete match of socket and make other players available
+    var i = matchIndexFromSocket(socket);
+    if (i)
+    {
+        for (var j=0; j<matches[i].sockets.length; j++)
+        {
+            if (matches[i].sockets[j] !== socket &&
+                matches[i].sockets[j].readyState === matches[i].sockets[j].OPEN)
+            {
+                matches[i].sockets[j].send(JSON.stringify({
+                    control: "match_end",
+                    data: null
+                }));
+                
+                sockets[playerFromSocket(matches[i].sockets[j])].status = "available";
+            }
+        }
+    }
+    
+    var player = playerFromSocket(socket);
+    if (player)
+    {
+        sockets[player] = {
+            socket: null,
+            status: "offline"
+        };
+    }
+    
+    broadcastPlayersList();
+    
+    return;
+}
+
+wss.on('connection', function (socket) {
+    socket.on('message', function (message) {
+        analyzeMessage(socket, message);
     });
-    ws.on('close', function (message) {
-        analyzeMessage(ws, JSON.stringify({control: "close", data: null}));
+    socket.on('close', function (message) {
+        onConnectionClose(socket);
     });
 });
