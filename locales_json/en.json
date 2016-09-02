@@ -24,6 +24,7 @@
     "first_player": "{0} starts!",
     "game": "Game:",
     "help": "Help",
+    "list_of_servers": "You can connect to a server from the list below:",
     "login-btn": "Login",
     "login-register": "Login or register",
     "match-end": "Match end",
