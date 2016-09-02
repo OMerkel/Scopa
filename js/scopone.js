@@ -27,7 +27,7 @@
 
 if (typeof module !== "undefined")
 {
-    ClassicMatch = require("./classic.js").GameClass;
+    global.ClassicMatch = require("./classic.js").GameClass;
 }
 
 function ScoponeMatch() 

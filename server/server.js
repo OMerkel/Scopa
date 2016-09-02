@@ -22,6 +22,16 @@ var fs = require('fs');
 var crypto = require('crypto');
 var settings = require("./settings.js");
 var http = require('http');
+var express = require('express');
+
+var app = express();
+
+app.use(function (req, res) {
+    res.send("Scopa Online Multiplayer Server");
+});
+
+var server = http.createServer();
+var wss = new ws.Server({ server: server });
 
 //loading games informations and classes
 var games = {
@@ -44,9 +54,6 @@ for (var key in games)
     };
 }
 
-var server = http.createServer();
-var wss = new ws.Server({ server: server });
-
 var players = {};
 var sockets = {};
 var matches = [];
@@ -64,7 +71,7 @@ fs.readFile(settings.playersFile, {flag: "r"}, function(err, data) {
     else 
     {
         players = JSON.parse(data);
-        for (key in players)
+        for (var key in players)
         {
             sockets[key] = {
                 socket: null,
@@ -77,7 +84,7 @@ fs.readFile(settings.playersFile, {flag: "r"}, function(err, data) {
 //return the username of the player who opened the socket
 function playerFromSocket(socket)
 {
-    for (player in sockets)
+    for (var player in sockets)
         if (sockets[player].socket === socket)
             return player;
 
@@ -178,6 +185,8 @@ function matchNext(i)
             }
             
             matches[i] = undefined;
+            
+            broadcastPlayersList();
             
             return;
         }
@@ -315,7 +324,7 @@ function analyzeMessage(socket, message)
             matches[i].acks[0] += 1;
             if (matches[i].acks[0] === matches[i].acks[1])
             {
-                sendingMsg = JSON.stringify({
+                var sendingMsg = JSON.stringify({
                     control: "match_started",
                     data: null
                 });
@@ -336,7 +345,7 @@ function analyzeMessage(socket, message)
         
         if (msg.data === "refuse")
         {
-            sendingMsg = JSON.stringify({
+            var sendingMsg = JSON.stringify({
                 control: "player_refused",
                 data: playerFromSocket(socket)
             });
@@ -425,4 +434,5 @@ wss.on('connection', function (socket) {
     });
 });
 
+server.on('request', app);
 server.listen(settings.port, settings.host);

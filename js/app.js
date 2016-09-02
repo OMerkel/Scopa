@@ -609,6 +609,7 @@ ScopaApplication = function()
     }
     
     this.onlineMatch.onconnectionclose = function() {
+        app.clearMatch();
         app.showDialog("connection-lost");
     }
     

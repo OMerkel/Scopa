@@ -130,7 +130,7 @@ CardsGroup.prototype.mix = function()
 {
     for (var i=0; i<this.length; i++) 
     {
-        j=Math.floor(Math.random()*this.length);
+        var j = Math.floor(Math.random()*this.length);
         var tmp = this[i];
         this[i] = this[j];
         this[j] = tmp;
@@ -196,7 +196,7 @@ Player.prototype.value = function(par, values)
 {
     //console.log(this.name);
     var value = 0;
-    for (key in par) {
+    for (var key in par) {
         if (key in values)
         {
             value += par[key]*values[key](this.memory);

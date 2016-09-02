@@ -28,11 +28,11 @@
 if (typeof module !== "undefined")
 {
     var scopa_utils = require("./utils.js");
-    combinations = scopa_utils.combinations;
-    Card = scopa_utils.Card;
-    CardsGroup = scopa_utils.CardsGroup;
-    Player = scopa_utils.Player;
-    Response = scopa_utils.Response;
+    global.combinations = scopa_utils.combinations;
+    global.Card = scopa_utils.Card;
+    global.CardsGroup = scopa_utils.CardsGroup;
+    global.Player = scopa_utils.Player;
+    global.Response = scopa_utils.Response;
 }
 
 function ClassicMatch() 
@@ -79,7 +79,7 @@ ClassicMatch.prototype.start = function(teams)
     if (teams.length !== 2) return;
     
     this._responsesQueue = [];
-    response = new Response();
+    var response = new Response();
     
     var cards = [];
     
@@ -219,7 +219,7 @@ ClassicMatch.prototype.send = function(message)
             }
             else if (this.players[this.currentPlayer].type === "cpu")
             {
-                bestMove = this.cpuBestMove();
+                var bestMove = this.cpuBestMove();
                 response = this.playCard(bestMove[0], bestMove[1]);
             }
         }
